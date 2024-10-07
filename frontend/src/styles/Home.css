@@ -1,0 +1,29 @@
+.home-container {
+    padding: 50px;
+    background-color: #242426;
+    color: white;
+    min-height: calc(100vh - 0px);
+  }
+  
+  .home-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .card-container {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .card {
+    background-color: #242426 !important;
+    color: #FFFFFF !important;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    border: none !important;
+  }
+  
+  .card-content {
+    margin-top: 10px;
+  }  

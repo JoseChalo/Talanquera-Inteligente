@@ -1,0 +1,10 @@
+.residentClass{
+    background-color: #222226;
+    min-height: calc(100vh - 0px);
+}
+
+.resident-container {
+    background-color: #222226;
+    color: #FFF;
+    padding: 50px;
+}
