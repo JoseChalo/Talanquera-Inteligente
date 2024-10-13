@@ -18,7 +18,6 @@ const CameraCapture = () => {
     setImage(canvas.toDataURL('image/jpeg'));
   };
 
-  
   return (
     <div>
       <video ref={videoRef} autoPlay />
