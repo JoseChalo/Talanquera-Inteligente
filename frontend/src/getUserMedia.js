@@ -15,7 +15,25 @@ const CameraCapture = () => {
     canvas.height = videoRef.current.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    setImage(canvas.toDataURL('image/jpeg'));
+    const imageData = canvas.toDataURL('image/jpeg');
+
+    // Enviar la imagen al servidor EC2
+    fetch('http://localhost:3001/api/faceCompare', { // Cambia la URL
+      method: 'POST',
+      body: JSON.stringify({ image: imageData }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Respuesta del servidor:', data);
+      })
+      .catch((error) => {
+        console.error('Error al enviar la imagen:', error);
+      });
+
+    setImage(imageData); // Puedes mantener la imagen localmente si lo deseas
   };
 
   return (

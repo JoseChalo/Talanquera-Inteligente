@@ -1,11 +1,19 @@
+require('dotenv').config();
 const express = require('express');
-const app = express();
-const port = 3000;
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const AppRoutes = require('./routes/routes');
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const app = express();
+const port = 3001;
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json({ limit: '10mb' }));
+
+// Usar las rutas de reconocimiento facial
+app.use('/api', AppRoutes);
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
