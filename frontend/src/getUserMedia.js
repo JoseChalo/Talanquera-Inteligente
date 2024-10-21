@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
 
 const CameraCapture = () => {
   const videoRef = useRef(null);
@@ -15,6 +16,25 @@ const CameraCapture = () => {
     return () => clearInterval(intervalId);
   };
 
+  const testFetch = async () => {
+    await fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getDataBase/getAllResidents', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        DPI: "*" 
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Respuesta del servidor:', data);
+      })
+      .catch((error) => {
+        console.error('Error con la peticion:', error);
+      });
+  };
+
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -24,7 +44,7 @@ const CameraCapture = () => {
     const imageData = canvas.toDataURL('image/jpeg');
 
     // Enviar la imagen al servidor EC2
-    fetch('http://localhost:3001/api/faceCompare', {
+    fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getAllResidents/getAllResidents', {
       method: 'POST',
       body: JSON.stringify({ image: imageData }),
       headers: {
@@ -42,14 +62,13 @@ const CameraCapture = () => {
     setImage(imageData); // Puedes mantener la imagen localmente si lo deseas
   };
 
-  useEffect(() => {
-    startCamera();
-  }, []);
-
   return (
     <div>
       <video ref={videoRef} autoPlay />
       {image && <img src={image} alt="captura" />}
+      <Button variant="primary" type="submit" onClick={testFetch}>
+        Submit
+      </Button>
     </div>
   );
 };
