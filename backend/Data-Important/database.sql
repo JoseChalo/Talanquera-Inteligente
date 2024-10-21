@@ -73,54 +73,10 @@ DEFAULT VALUES;
 INSERT INTO vivienda
 DEFAULT VALUES;
 
--- Insertar datos en la tabla residentes
-INSERT INTO residentes (nombre, dpi, numTelefono, data_Biometrico, numVivienda)
-VALUES
-    ('Jose Chalo', '12345678901011', '12345678', NULL, 1),
-    ('Nazareth Sosa', '98765432101011', '87654321', NULL, 2),
-    ('Carlos Lopez', '12345098761011', '12312312', NULL, 3),
-    ('Ana Perez', '45678912341011', '98765432', NULL, 4),
-    ('Mario Gomez', '78945612301011', '76543210', NULL, 5),
-    ('Luis Fernandez', '65432198711011', '12345679', NULL, 6),
-    ('Carla Mendoza', '32165498711011', '45678910', NULL, 7),
-    ('Lucia Suarez', '95135785201011', '85296374', NULL, 8),
-    ('Andrea Lopez', '74185296301011', '96385274', NULL, 9),
-    ('Juan Morales', '85296374101011', '15935748', NULL, 10);
-
--- Insertar datos en la tabla visitas
-INSERT INTO visitas (dpi, nombre, biometricos, matricula)
-VALUES
-    ('96385274101011', 'Sofia Ortega', NULL, 'ABC123'),
-    ('75315945601011', 'Miguel Torres', NULL, 'XYZ789'),
-    ('45632178901011', 'Carmen Ruiz', NULL, 'DEF456'),
-    ('85214796301011', 'Pedro Sanchez', NULL, 'LMN321'),
-    ('95175385201011', 'Roberto Ramirez', NULL, 'GHI987');
-
--- Insertar datos en la tabla automovil
-INSERT INTO automovil (matricula, modelo, color)
-VALUES
-    ('ABC123', 'Toyota Corolla', 'Rojo'),
-    ('XYZ789', 'Honda Civic', 'Azul'),
-    ('DEF456', 'Nissan Sentra', 'Blanco'),
-    ('LMN321', 'Chevrolet Spark', 'Negro'),
-    ('GHI987', 'Ford Fiesta', 'Gris');
-
--- Insertar datos en la tabla residentes_automovil
-INSERT INTO residentes_automovil (idResidente, matricula)
-VALUES
-    (1, 'ABC123'),
-    (2, 'XYZ789'),
-    (3, 'DEF456'),
-    (4, 'LMN321'),
-    (5, 'GHI987');
-
--- Insertar datos en la tabla vivienda_visitas
-INSERT INTO vivienda_visitas (numVivienda, idVisita)
-VALUES
-    (1, 1),
-    (2, 2),
-    (3, 3),
-    (4, 4),
-    (5, 5);
-
+use Talanquera_Inteligente;
 SELECT * FROM residentes;
+SELECT * FROM vivienda;
+
+
+
+--DROP TABLE residentes;

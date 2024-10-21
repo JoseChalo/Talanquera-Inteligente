@@ -1,0 +1,100 @@
+.register-resident-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .form-camera-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .form-column {
+    flex: 1;
+    margin-right: 25px;
+  }
+  
+  .camera-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .video-feed {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  
+  .capture-button {
+    display: block;
+    margin: 10px auto;
+    margin-top: 11px;
+    background-color: #F6AC27 !important;
+    font-weight: bold !important;
+    color: white;
+    border: none !important;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .capture-button:hover {
+    background-color: #ff9000 !important;
+  }
+  
+  .capture-button:active {
+    background-color: #ff9100;
+  }
+  
+  .captured-image {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 20px;
+  }
+  
+
+.register-title {
+    margin-top: 50px; 
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .form-spacing {
+    margin-bottom: 25px; 
+  }
+  
+  .form-group {
+    margin-bottom: 15px; 
+  }
+  
+  .formMargin{
+    margin-top: 24px;
+  }
+
+
+  .custom-button {
+    background-color: #F6AC27 !important;
+    font-weight: bold !important;
+    color: white;
+    border: none !important;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 19px !important;
+    margin-left: 200px !important;
+    width: 20% !important;
+  }
+  
+  .custom-button:hover {
+    background-color: #ff9000 !important;
+  }
+  
+  .custom-button:active {
+    background-color: #ff9100;
+  }
+  

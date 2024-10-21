@@ -1,8 +1,15 @@
 import React from 'react';
 import { Container, Table, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate
 import '../styles/Cars.css';
 
 function Cars() {
+  const navigate = useNavigate();  // Inicializa el hook de navegación
+
+  const handleRegisterClick = () => {
+    navigate('/RegisterCars');  // Redirige a la página de registro de vehículos
+  };
+
   return (
     <div className='carsClass'>
       <Container className='cars-container'>
@@ -20,12 +27,17 @@ function Cars() {
             <tr>
               <td>P570JMK</td>
               <td>Mazda</td>
-              <td>Fernando </td>
-              <td><Button variant="warning">Editar</Button> <Button variant="danger">Eliminar</Button></td>
+              <td>Fernando</td>
+              <td>
+                <Button variant="warning">Editar</Button>{' '}
+                <Button variant="danger">Eliminar</Button>
+              </td>
             </tr>
           </tbody>
         </Table>
-        <Button variant="primary">Registrar nuevo vehículo</Button>
+        <Button variant="primary" onClick={handleRegisterClick}>
+          Registrar nuevo vehículo
+        </Button>
       </Container>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const CameraCapture = () => {
   const videoRef = useRef(null);
@@ -7,6 +7,12 @@ const CameraCapture = () => {
   const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     videoRef.current.srcObject = stream;
+
+    // Iniciar la captura automática de imágenes
+    const intervalId = setInterval(captureImage, 5000); // Captura cada 5 segundos
+
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(intervalId);
   };
 
   const captureImage = () => {
@@ -18,7 +24,7 @@ const CameraCapture = () => {
     const imageData = canvas.toDataURL('image/jpeg');
 
     // Enviar la imagen al servidor EC2
-    fetch('http://localhost:3001/api/faceCompare', { // Cambia la URL
+    fetch('http://localhost:3001/api/faceCompare', {
       method: 'POST',
       body: JSON.stringify({ image: imageData }),
       headers: {
@@ -36,11 +42,13 @@ const CameraCapture = () => {
     setImage(imageData); // Puedes mantener la imagen localmente si lo deseas
   };
 
+  useEffect(() => {
+    startCamera();
+  }, []);
+
   return (
     <div>
       <video ref={videoRef} autoPlay />
-      <button onClick={startCamera}>Iniciar cámara</button>
-      <button onClick={captureImage}>Capturar Imagen</button>
       {image && <img src={image} alt="captura" />}
     </div>
   );
