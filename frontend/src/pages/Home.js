@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 import '../styles/Home.css';
 
 function Home() {
   const videoRef = useRef(null);
   const [image, setImage] = useState(null);
+  const [serverResponse, setServerResponse] = useState(null);
+  const [error, setError] = useState(null);
 
   // Función para capturar la imagen
   const captureImage = () => {
@@ -27,6 +29,10 @@ function Home() {
     }
 
     try {
+      // Reiniciar el estado
+      setError(null);
+      setServerResponse(null);
+
       // Enviar la imagen a la API como POST request
       const response = await fetch('https://gh8bben0sg.execute-api.us-east-2.amazonaws.com/search/residentFaceID', {
         method: 'POST',
@@ -39,9 +45,15 @@ function Home() {
         }
       });
 
+      if (!response.ok) {
+        throw new Error(`Error al buscar el residente: ${response.statusText}`);
+      }
+
       const data = await response.json();
+      setServerResponse(data); // Guardar la respuesta del servidor
       console.log('Respuesta del servidor:', data);
     } catch (error) {
+      setError(error.message);
       console.error('Error al enviar la imagen:', error);
     }
   };
@@ -91,6 +103,24 @@ function Home() {
           </div>
         </div>
       </div>
+
+      {error && <Alert variant="danger">Error: {error}</Alert>}
+      {serverResponse && (
+        <div className="response-container">
+          <h2>Resultados del Reconocimiento</h2>
+          {serverResponse.dataResident && serverResponse.dataResident.length > 0 ? (
+            serverResponse.dataResident.map((match, index) => (
+              <div key={index}>
+                <p><strong>Residente:</strong> {match.Face.ExternalImageId}</p>
+                <p><strong>Confianza:</strong> {match.Face.Confidence.toFixed(2)}%</p>
+                <p><strong>Similitud:</strong> {match.Similarity.toFixed(2)}%</p>
+              </div>
+            ))
+          ) : (
+            <p>No se encontraron coincidencias.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

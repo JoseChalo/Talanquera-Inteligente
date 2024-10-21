@@ -7,14 +7,16 @@ CREATE TABLE vivienda(
     PRIMARY KEY (numVivienda)
 );
 
+
+
+DROP TABLE residentes;
 CREATE TABLE residentes(
-    idResidente INT IDENTITY(1,1),
     nombre VARCHAR(100),
     dpi VARCHAR(15),
     numTelefono VARCHAR(9),
     data_Biometrico VARCHAR(MAX),
     numVivienda INT NOT NULL,
-    PRIMARY KEY (idResidente),
+    PRIMARY KEY (dpi),
     FOREIGN KEY (numVivienda) REFERENCES vivienda
 );
 
@@ -76,7 +78,3 @@ DEFAULT VALUES;
 use Talanquera_Inteligente;
 SELECT * FROM residentes;
 SELECT * FROM vivienda;
-
-
-
---DROP TABLE residentes;

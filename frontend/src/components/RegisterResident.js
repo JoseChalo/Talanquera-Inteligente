@@ -67,6 +67,9 @@ function RegisterResident() {
         });
 
         const data = await response.json();
+        if(data.error === "Ya existe un residente con ese DPI."){
+          alert("Ya existe un residente con ese DPI.");
+        }
         console.log('Respuesta del servidor:', data);
       } catch (error) {
         console.error('Error al enviar la imagen:', error);

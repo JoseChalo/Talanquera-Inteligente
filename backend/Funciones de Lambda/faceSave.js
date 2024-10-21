@@ -52,30 +52,18 @@ module.exports.handler = async (event) => {
     }
     console.log('Parámetros validados:', { name, DPI, phone, numHome, S3_BUCKET_NAME });
 
-    // Convertir la imagen de base64 a buffer
-    const base64Data = image.replace(/^data:image\/jpeg;base64,/, ''); // Eliminar el prefijo si existe
-    const buffer = Buffer.from(base64Data, 'base64');
-
-    // Subir imagen a S3
-    const s3Params = {
-      Bucket: S3_BUCKET_NAME,
-      Key: `Talanquera_Inteligente_IS/Fotos_Residentes/${DPI}.jpg`,
-      Body: buffer,
-      ContentType: 'image/jpeg',
-    };
-
-    console.log('Subiendo imagen a S3 con parámetros:', s3Params);
-    const uploadResult = await s3.upload(s3Params).promise();
-    console.log('Subida a S3 exitosa:', uploadResult.Location);
-
     // Consultar vivienda y agregar residente
     try {
       console.log('Consultando vivienda en la base de datos...');
       const searchHome = 'SELECT * FROM vivienda WHERE numVivienda = @numHome';
+      const searchResidente = 'SELECT * FROM residentes WHERE dpi = @dpi'
       const resultsHome = await queryAsync(searchHome, { numHome });
+      const resultsResidenteSearch = await queryAsync(searchResidente, { DPI });
 
       if (resultsHome.length === 0) {
         throw new Error(`Vivienda con número ${numHome} no existe.`);
+      } else if (resultsResidenteSearch.length !== 0){
+        throw new Error(`Ya existe un residente con ese DPI.`);
       }
 
       console.log('Vivienda encontrada:', resultsHome);
@@ -97,6 +85,22 @@ module.exports.handler = async (event) => {
       };
     }
 
+    // Convertir la imagen de base64 a buffer
+    const base64Data = image.replace(/^data:image\/jpeg;base64,/, ''); // Eliminar el prefijo si existe
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    // Subir imagen a S3
+    const s3Params = {
+      Bucket: S3_BUCKET_NAME,
+      Key: `Talanquera_Inteligente_IS/Fotos_Residentes/${DPI}.jpg`,
+      Body: buffer,
+      ContentType: 'image/jpeg',
+    };
+
+    console.log('Subiendo imagen a S3 con parámetros:', s3Params);
+    const uploadResult = await s3.upload(s3Params).promise();
+    console.log('Subida a S3 exitosa:', uploadResult.Location);
+
     // Crear colección de Rekognition
     try {
       console.log('Creando colección en Rekognition...');
@@ -113,14 +117,20 @@ module.exports.handler = async (event) => {
     // Indexar cara en Rekognition
     try {
       console.log('Indexando cara en Rekognition...');
+
+      // Reemplazar espacios por guiones en el nombre y DPI
+      const sanitizedName = name.replace(/\s+/g, '-'); // Reemplaza todos los espacios por guiones
+      const sanitizedDPI = DPI.replace(/\s+/g, '-'); // Reemplaza todos los espacios por guiones
+
       const params = {
         CollectionId: 'ResidentsFaces',
         Image: {
           S3Object: {
             Bucket: S3_BUCKET_NAME,
-            Name: `Talanquera_Inteligente_IS/Fotos_Residentes/${DPI}.jpg`,
+            Name: `Talanquera_Inteligente_IS/Fotos_Residentes/${DPI}.jpg`, // Nombre del archivo
           },
         },
+        ExternalImageId: `Nombre:${sanitizedName}_DPI:${sanitizedDPI}` // Usar los nombres sanitizados
       };
 
       const indexData = await rekognition.indexFaces(params).promise();
@@ -129,6 +139,7 @@ module.exports.handler = async (event) => {
       console.error('Error al indexar la cara en Rekognition:', err);
       throw new Error('Error al indexar la cara en Rekognition: ' + err.message);
     }
+
 
     return {
       statusCode: 200,
