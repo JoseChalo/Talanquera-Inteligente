@@ -17,17 +17,24 @@ function Cars() {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Placa</th>
+              <th>DPI</th>
               <th>Modelo</th>
-              <th>Propietario</th>
+              <th>Color</th>
+              <th>Matricula</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>P570JMK</td>
+              <td>1234 12345 1234</td>
               <td>Mazda</td>
-              <td>Fernando</td>
+              <td>Gris</td>
+              <td>
+                  <img 
+                    alt="Fotografía de la matrícula" 
+                    style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
+                  />
+                </td>
               <td>
                 <Button variant="warning">Editar</Button>{' '}
                 <Button variant="danger">Eliminar</Button>

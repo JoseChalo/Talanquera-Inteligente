@@ -6,6 +6,20 @@ const CameraCapture = () => {
   const [image, setImage] = useState(null);
 
   const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+
+      // Limpiar el stream al desmontar
+      return () => {
+        stream.getTracks().forEach(track => track.stop());
+      };
+    } catch (error) {
+      console.error("Error al acceder a la cámara:", error);
+    }
+  };
+
+  /*const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     videoRef.current.srcObject = stream;
 
@@ -14,13 +28,17 @@ const CameraCapture = () => {
 
     // Limpiar el intervalo cuando el componente se desmonte
     return () => clearInterval(intervalId);
-  };
+  };*/
 
   const testFetch = async () => {
-    await fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getDataBase/getAllResidents', {
+    await fetch('https://kcxa2xedhl.execute-api.us-east-2.amazonaws.com/save/saveCar', {
       method: 'POST',
       body: JSON.stringify({ 
-        DPI: "*" 
+        DPI: "2675 88259 0101",
+        modelo: "mazda",
+        color: "gris",
+        matricula: image,
+        numero: 1
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +62,7 @@ const CameraCapture = () => {
     const imageData = canvas.toDataURL('image/jpeg');
 
     // Enviar la imagen al servidor EC2
-    fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getAllResidents/getAllResidents', {
+    /*fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getAllResidents/getAllResidents', {
       method: 'POST',
       body: JSON.stringify({ image: imageData }),
       headers: {
@@ -57,9 +75,9 @@ const CameraCapture = () => {
       })
       .catch((error) => {
         console.error('Error al enviar la imagen:', error);
-      });
+      });*/
 
-    setImage(imageData); // Puedes mantener la imagen localmente si lo deseas
+    setImage(imageData);
   };
 
   return (
@@ -67,7 +85,13 @@ const CameraCapture = () => {
       <video ref={videoRef} autoPlay />
       {image && <img src={image} alt="captura" />}
       <Button variant="primary" type="submit" onClick={testFetch}>
-        Submit
+        testFetch
+      </Button>
+      <Button variant="primary" type="submit" onClick={captureImage}>
+        captureImage
+      </Button>
+      <Button variant="primary" type="submit" onClick={startCamera}>
+        startCamera
       </Button>
     </div>
   );

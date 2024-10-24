@@ -42,7 +42,7 @@ function Residents() {
           <h2>Residentes Registrados</h2>
           <Button variant="primary" onClick={handleClick} className="register-button">Registrar nuevo residente</Button>
         </div>
-        <Table striped bordered hover className='tableColor'>
+        <Table striped bordered hover variant="dark">
           <thead>
             <tr>
               <th>Nombre</th>
