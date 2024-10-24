@@ -35,58 +35,60 @@ function RegisterVisits() {
   };
 
   return (
-    <Container className='register-visit-container'>
-      <h2 className="register-title">Registrar Nueva Visita</h2>
-      <div className="form-camera-container">
+    <div className='registerVisit'>
+      <Container className='register-visit-container'>
+        <h2 className="register-title">Registrar Nueva Visita</h2>
+        <div className="form-camera-container">
 
-        <Form onSubmit={handleSubmit} className="form-column">
-          <Form.Group controlId="formName">
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el nombre"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Form.Group>
+          <Form onSubmit={handleSubmit} className="form-column">
+            <Form.Group controlId="formName">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el nombre"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formDpi" className="formMargin">
-            <Form.Label>DPI</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el DPI"
-              value={dpi}
-              onChange={(e) => setDpi(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group controlId="formDpi" className="formMargin">
+              <Form.Label>DPI</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el DPI"
+                value={dpi}
+                onChange={(e) => setDpi(e.target.value)}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formLicensePlate" className="formMargin">
-            <Form.Label>Placa</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa la placa"
-              value={licensePlate}
-              onChange={(e) => setLicensePlate(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group controlId="formLicensePlate" className="formMargin">
+              <Form.Label>Placa</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa la placa"
+                value={licensePlate}
+                onChange={(e) => setLicensePlate(e.target.value)}
+              />
+            </Form.Group>
 
-          <Button className="custom-button" type="submit">
-            Registrar
-          </Button>
-        </Form>
+            <Button className="custom-button" type="submit">
+              Registrar
+            </Button>
+          </Form>
 
 
-        <div className="camera-column">
-          <Form.Label>Fotografía</Form.Label>
-          <video ref={videoRef} autoPlay className="video-feed" />
-          <Button variant="success" onClick={captureImage} className="capture-button">
-            Tomar Foto
-          </Button>
-          {image && <img src={image} alt="Captura" className="captured-image" />}
+          <div className="camera-column">
+            <Form.Label>Fotografía</Form.Label>
+            <video ref={videoRef} autoPlay className="video-feed" />
+            <Button variant="success" onClick={captureImage} className="capture-button">
+              Tomar Foto
+            </Button>
+            {image && <img src={image} alt="Captura" className="captured-image" />}
+          </div>
+
         </div>
-
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }
 

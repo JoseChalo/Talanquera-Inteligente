@@ -1,3 +1,9 @@
+.registerCars{
+  background-color: #222226;
+  color: #FFF;
+  min-height: calc(100vh - 0px);
+}
+
 .register-cars-container {
     display: flex;
     flex-direction: column;

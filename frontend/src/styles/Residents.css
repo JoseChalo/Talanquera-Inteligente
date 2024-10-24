@@ -1,3 +1,16 @@
+.title-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .register-button {
+    margin-left: 20px;
+    background-color: #506b1a !important;
+    border: none !important;
+  }
+
 .residentClass{
     background-color: #222226;
     min-height: calc(100vh - 0px);
@@ -7,4 +20,17 @@
     background-color: #222226;
     color: #FFF;
     padding: 50px;
+}
+
+.editarButton {
+    background-color: orange !important;
+    border: none !important;
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+.eliminarButton{
+    background-color: #cf1515 !important;
+    border: none !important;
+    margin-top: 30px;
 }

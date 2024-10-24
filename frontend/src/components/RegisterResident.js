@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterResident.css'; 
 
 function RegisterResident() {
@@ -9,6 +10,7 @@ function RegisterResident() {
   const [image, setImage] = useState(null);
   const [numHome, setNumHome] = useState('');
   const videoRef = useRef(null);
+  const navigate = useNavigate();
 
   // Iniciar la cámara
   useEffect(() => {
@@ -86,73 +88,97 @@ function RegisterResident() {
       return;
     }
 
-    newResident();
+    newResident().then(() => {
+      navigate('/Residents');
+    });
   };
 
   return (
-    <Container className='register-resident-container'>
-      <h2 className='register-title'>Registrar Nuevo Residente</h2>
-      <div className="form-camera-container">
-        <Form onSubmit={handleSubmit} className="form-column form-spacing">
-          <Form.Group controlId="formName">
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el nombre"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Group>
+    <div className='registerResident'> 
+      <Container className='register-resident-container'>
+        <h2 className='register-title'>Registrar Nuevo Residente</h2>
+        <div className="form-camera-container">
+          <Form onSubmit={handleSubmit} className="form-column form-spacing">
+            <Form.Group controlId="formName">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el nombre"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formDpi" className="formMargin">
-            <Form.Label>DPI</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el DPI"
-              value={dpi}
-              onChange={(e) => setDpi(e.target.value)}
-              required
-            />
-          </Form.Group>
+            <Form.Group controlId="formDpi" className="formMargin">
+              <Form.Label>DPI</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el DPI"
+                value={dpi}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, ''); 
+                  if (value.length > 4) {
+                    value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                  }
+                  if (value.length > 9) {
+                    value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                  }
+                  setDpi(value);
+                }}
+                maxLength={15}
+                required
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formPhone" className="formMargin">
-            <Form.Label>Teléfono</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el teléfono"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </Form.Group>
 
-          <Form.Group controlId="number" className="formMargin">
-            <Form.Label>Número de casa</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingresa el número de casa"
-              value={numHome}
-              onChange={(e) => setNumHome(e.target.value)}
-              required
-            />
-          </Form.Group>
+            <Form.Group controlId="formPhone" className="formMargin">
+              <Form.Label>Teléfono</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el teléfono"
+                value={phone}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, '');
+                  
+                  if (value.length > 8) {
+                    value = value.slice(0, 8);
+                  }
 
-          <Button className="custom-button" type="submit">
-            Registrar
-          </Button>
-        </Form>
+                  setPhone(value);
+                }}
+                required
+              />
+            </Form.Group>
 
-        <div className="camera-column">
-          <Form.Label>Fotografía</Form.Label>
-          <video ref={videoRef} autoPlay className="video-feed" />
-          <Button variant="success" onClick={captureImage} className="capture-button">
-            Tomar Foto
-          </Button>
-          {image && <img src={image} alt="Captura" className="captured-image" />}
+
+            <Form.Group controlId="number" className="formMargin">
+              <Form.Label>Número de casa</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el número de casa"
+                value={numHome}
+                onChange={(e) => setNumHome(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Button className="custom-button" type="submit">
+              Registrar
+            </Button>
+          </Form>
+
+          <div className="camera-column">
+            <Form.Label>Fotografía</Form.Label>
+            <video ref={videoRef} autoPlay className="video-feed" />
+            <Button variant="success" onClick={captureImage} className="capture-button">
+              Tomar Foto
+            </Button>
+            {image && <img src={image} alt="Captura" className="captured-image" />}
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }
 
