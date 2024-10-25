@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Button, Alert, Table } from 'react-bootstrap';
 import '../styles/Home.css';
 
 function Home() {
@@ -7,6 +7,7 @@ function Home() {
   const [image, setImage] = useState(null);
   const [serverResponse, setServerResponse] = useState(null);
   const [error, setError] = useState(null);
+  const [recognitionHistory, setRecognitionHistory] = useState([]); // Historial de reconocimientos
 
   // Función para capturar la imagen
   const captureImage = () => {
@@ -16,9 +17,8 @@ function Home() {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
   
-    // Convertir la imagen a base64
     const dataURL = canvas.toDataURL('image/jpeg');
-    setImage(dataURL); // Guardar la imagen en el estado
+    setImage(dataURL);
   };
 
   // Función para enviar la imagen al servidor
@@ -29,11 +29,9 @@ function Home() {
     }
 
     try {
-      // Reiniciar el estado
       setError(null);
       setServerResponse(null);
 
-      // Enviar la imagen a la API como POST request
       const response = await fetch('https://gh8bben0sg.execute-api.us-east-2.amazonaws.com/search/residentFaceID', {
         method: 'POST',
         body: JSON.stringify({ 
@@ -50,8 +48,20 @@ function Home() {
       }
 
       const data = await response.json();
-      setServerResponse(data); // Guardar la respuesta del servidor
-      console.log('Respuesta del servidor:', data);
+      setServerResponse(data);
+
+      if (data.dataResident && data.dataResident.length > 0) {
+        const recognizedResident = data.dataResident[0]; 
+        const residentData = {
+          name: recognizedResident.Face.ExternalImageId,
+          dpi: recognizedResident.DPI || 'No disponible',
+          confidence: recognizedResident.Face.Confidence.toFixed(2),
+          similarity: recognizedResident.Similarity.toFixed(2),
+        };
+        
+        // Actualizar el historial de reconocimientos
+        setRecognitionHistory((prevHistory) => [...prevHistory, residentData]);
+      }
     } catch (error) {
       setError(error.message);
       console.error('Error al enviar la imagen:', error);
@@ -64,7 +74,6 @@ function Home() {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
 
-        // Limpiar el stream al desmontar
         return () => {
           stream.getTracks().forEach(track => track.stop());
         };
@@ -81,13 +90,36 @@ function Home() {
       <div className="card-container">
         <div className="card">
           <h2>Visitas</h2>
-          <div className="card-content">Contenido de visitas</div>
+          <div className="card-content">
+            <Table striped bordered hover variant='dark'>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Confianza</th>
+                  <th>Similitud</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recognitionHistory.length > 0 ? (
+                  recognitionHistory.map((record, index) => (
+                    <tr key={index}>
+                      <td>{record.name}</td>
+                      <td>{record.confidence}%</td>
+                      <td>{record.similarity}%</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4">No hay registros de reconocimiento.</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
         </div>
         <div className="card">
           <h2>Cámara</h2>
-          <div className="card-content">Visualización de cámara</div>
           <div className="camera-column">
-            <Form.Label>Fotografía</Form.Label>
             <video ref={videoRef} autoPlay className="video-feed" />
             <Button variant="success" onClick={captureImage} className="capture-button">
               Tomar Foto
@@ -95,7 +127,7 @@ function Home() {
             {image && (
               <>
                 <img src={image} alt="Captura" className="captured-image" />
-                <Button variant="primary" onClick={searchResident}>
+                <Button className="capture-button" onClick={searchResident}>
                   Enviar Foto
                 </Button>
               </>

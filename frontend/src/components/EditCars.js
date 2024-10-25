@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterResident.css';
 
-function RegisterCars() {
+function EditCars() {
   const [dpi, setDpi] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
   const [numero, setNumero] = useState('');
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
-  const streamRef = useRef(null); // Para almacenar el stream de la cámara
+  const streamRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Iniciar la cámara
   useEffect(() => {
@@ -19,14 +20,13 @@ function RegisterCars() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
-        streamRef.current = stream; // Guardar el stream
+        streamRef.current = stream;
       } catch (error) {
         console.error("Error al acceder a la cámara:", error);
       }
     };
     startCamera();
 
-    // Limpiar el stream al desmontar
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
@@ -34,14 +34,35 @@ function RegisterCars() {
     };
   }, []);
 
-  // Capturar la imagen
+  // Obtener los datos del vehículo al cargar la página
+  useEffect(() => {
+    const fetchCarData = async () => {
+      const matricula = location.state?.matricula; // Obtener la matrícula de la navegación
+      if (matricula) {
+        try {
+          const response = await fetch(`https://api-url.com/getCar/${matricula}`);
+          const data = await response.json();
+          setDpi(data.DPI);
+          setModel(data.modelo);
+          setColor(data.color);
+          setNumero(data.numero);
+          setImage(data.matriculaImagen);
+        } catch (error) {
+          console.error('Error al cargar los datos del vehículo:', error);
+        }
+      }
+    };
+    fetchCarData();
+  }, [location.state]);
+
+  // Capturar una nueva imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    
+
     canvas.toBlob((blob) => {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -58,15 +79,15 @@ function RegisterCars() {
     }
   };
 
-  // Función para enviar los datos
-  const newCar = async () => {
+  // Función para enviar la actualización
+  const updateCar = async () => {
     if (image) {
       try {
-        const response = await fetch('https://kcxa2xedhl.execute-api.us-east-2.amazonaws.com/save/saveCar', {
+        const response = await fetch('https://api-url.com/updateCar', {
           method: 'POST',
           body: JSON.stringify({
             DPI: dpi,
-            matricula: image,  // Enviar la imagen de la matrícula
+            matricula: image,
             modelo: model,
             color: color,
             numero: numero
@@ -79,10 +100,10 @@ function RegisterCars() {
         const data = await response.json();
         console.log('Respuesta del servidor:', data);
       } catch (error) {
-        console.error('Error al enviar los datos:', error);
+        console.error('Error al actualizar los datos:', error);
       }
     } else {
-      alert('Toma la foto antes de continuar con el registro.');
+      alert('Toma la foto antes de continuar con la actualización.');
     }
   };
 
@@ -93,21 +114,16 @@ function RegisterCars() {
       return;
     }
 
-    newCar().then(() => {
+    updateCar().then(() => {
       stopCamera(); // Apagar la cámara antes de navegar
       navigate('/Cars');
     });
   };
 
-  // Función para editar el vehículo
-  const handleEditCar = () => {
-    navigate('/EditCars', { state: { matricula: image } });
-  };
-
   return (
     <div className='registerResident'>
       <Container className='register-resident-container'>
-        <h2 className='register-title'>Registrar Nuevo Automóvil</h2>
+        <h2 className='register-title'>Editar Automóvil</h2>
         <div className="form-camera-container">
           <Form onSubmit={handleSubmit} className="form-column form-spacing">
             <Form.Group controlId="formDpi">
@@ -155,7 +171,7 @@ function RegisterCars() {
             </Form.Group>
 
             <Button className="custom-button" type="submit">
-              Registrar
+              Actualizar
             </Button>
           </Form>
 
@@ -165,14 +181,7 @@ function RegisterCars() {
             <Button variant="success" onClick={captureImage} className="capture-button">
               Tomar Foto
             </Button>
-            {image && (
-              <>
-                <img src={image} alt="Captura" className="captured-image" />
-                <Button variant="warning" onClick={handleEditCar} className="edit-button">
-                  Editar
-                </Button>
-              </>
-            )}
+            {image && <img src={image} alt="Captura" className="captured-image" />}
           </div>
         </div>
       </Container>
@@ -180,4 +189,4 @@ function RegisterCars() {
   );
 }
 
-export default RegisterCars;
+export default EditCars;

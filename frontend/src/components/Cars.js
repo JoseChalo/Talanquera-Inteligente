@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button } from 'react-bootstrap';
+import { Container, Table, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cars.css';
 
 function Cars() {
   const navigate = useNavigate();
   const [cars, setCars] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [carToDelete, setCarToDelete] = useState(null);
 
   // Función para obtener carros
   const fetchCars = async () => {
@@ -20,9 +22,6 @@ function Cars() {
         },
       });
       const data = await response.json();
-      
-      // Verifica la respuesta
-      console.log(data); // Para depuración
       if (data && data.data) {
         setCars(data.data);
       } else {
@@ -32,7 +31,6 @@ function Cars() {
       console.error('Error al obtener vehículos:', error);
     }
   };
-  
 
   // Obtener carros al cargar el componente
   useEffect(() => {
@@ -40,7 +38,34 @@ function Cars() {
   }, []);
 
   const handleClick = () => {
-    navigate('/RegisterCars'); // Redirige a la página de registro de vehículos
+    navigate('/EditCars');
+  };
+
+  const handleDeleteClick = (car) => {
+    setCarToDelete(car);
+    setShowModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (carToDelete) {
+      try {
+        const response = await fetch('https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteCar', {
+          method: 'POST',
+          body: JSON.stringify({ matricula: carToDelete.matricula }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (response.ok) {
+          // Actualizar la lista de vehículos después de la eliminación
+          await fetchCars();
+          setShowModal(false); // Cerrar el modal después de actualizar la lista
+        } else {
+          console.error('Error al eliminar vehículo:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al eliminar vehículo:', error);
+      }
+    }
   };
 
   return (
@@ -63,7 +88,7 @@ function Cars() {
             </tr>
           </thead>
           <tbody>
-            {cars.map((car, index) => ( 
+            {cars.map((car, index) => (
               <tr key={index}>
                 <td>{car.idResidente}</td>
                 <td>{car.modelo}</td>
@@ -77,12 +102,28 @@ function Cars() {
                 </td>
                 <td>
                   <Button className='editarButton' onClick={() => handleClick()}>Editar</Button>{' '}
-                  <Button className='eliminarButton'>Eliminar</Button>
+                  <Button className='eliminarButton' onClick={() => handleDeleteClick(car)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
+
+        {/* Modal de confirmación de eliminación */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación de Eliminación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Estás seguro de que deseas eliminar el vehículo con matrícula {carToDelete?.matricula}?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              Eliminar
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </div>
   );

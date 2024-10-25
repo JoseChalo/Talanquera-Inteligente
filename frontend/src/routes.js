@@ -8,6 +8,7 @@ import RegisterVisits from './components/RegisterVisits';
 import RegisterCars from './components/RegisterCars';
 import CameraCapture from './getUserMedia';
 import EditResident from './components/EditResident';
+import EditCars from './components/EditCars'
 
 function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ function AppRoutes() {
         <Route path="/RegisterCars" element={<RegisterCars />} />
         <Route path="/camara" element={<CameraCapture />} />
         <Route path="/EditResident" element={<EditResident/>} />
+        <Route path="/EditCars" element={<EditCars/>} />
       </Routes>
     </Router>
   );

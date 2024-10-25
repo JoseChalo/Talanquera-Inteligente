@@ -3,16 +3,19 @@
     background-color: #242426;
     color: white;
     min-height: calc(100vh - 0px);
+    margin-left: -50px;
   }
   
   .home-title {
     text-align: center;
     margin-bottom: 20px;
+    margin-left: -50px !important;
   }
   
   .card-container {
     display: flex;
     justify-content: space-around;
+    margin-left: -50px;
   }
   
   .card {
@@ -26,5 +29,10 @@
   
   .card-content {
     margin-top: 10px;
+    margin-left: -50px;
   }  
   
+  
+  .response-container {
+    margin-left: 120px;
+  }
