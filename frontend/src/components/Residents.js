@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button } from 'react-bootstrap';
+import { Container, Table, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Residents.css';
 
 function Residents() {
   const navigate = useNavigate();
   const [residents, setResidents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [residentToDelete, setResidentToDelete] = useState(null);
 
   // Función para obtener residentes
   const fetchResidents = async () => {
     try {
       const response = await fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getDataBase/getAllResidents', {
         method: 'POST',
-        body: JSON.stringify({
-          DPI: '*',
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        body: JSON.stringify({ DPI: '*' }),
+        headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
       setResidents(data.data);
@@ -33,6 +31,37 @@ function Residents() {
 
   const handleClick = () => {
     navigate('/RegisterResident');
+  };
+
+  const handleEditClick = (resident) => {
+    navigate('/editResident', { state: { resident } });
+  };
+
+  const handleDeleteClick = (resident) => {
+    setResidentToDelete(resident);
+    setShowModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (residentToDelete) {
+      try {
+        const response = await fetch('https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteResident', {
+          method: 'POST', // Cambiado a POST
+          body: JSON.stringify({ DPI: residentToDelete.dpi }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+        
+        if (response.ok) {
+          // Actualizar la lista de residentes después de la eliminación
+          await fetchResidents(); // Asegúrate de que se espere a que la función se complete
+          setShowModal(false); // Cerrar el modal después de actualizar la lista
+        } else {
+          console.error('Error al eliminar residente:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al eliminar residente:', error);
+      }
+    }
   };
 
   return (
@@ -62,19 +91,35 @@ function Residents() {
                 <td>{resident.numVivienda}</td>
                 <td>
                   <img 
-                    src={resident.data_Biometrico} 
+                    src={`${resident.data_Biometrico}?t=${Date.now()}`} 
                     alt="Fotografía del residente" 
                     style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
                   />
                 </td>
                 <td>
-                  <Button className='editarButton' onClick={handleClick}>Editar</Button>{' '}
-                  <Button className='eliminarButton'>Eliminar</Button>
+                  <Button className='editarButton' onClick={() => handleEditClick(resident)}>Editar</Button>
+                  <Button className='eliminarButton' onClick={() => handleDeleteClick(resident)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
+
+        {/* Confirmación */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación de Eliminación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Estás seguro de que deseas eliminar a {residentToDelete?.nombre}?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              Eliminar
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </div>
   );

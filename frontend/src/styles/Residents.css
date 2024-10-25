@@ -50,3 +50,18 @@
 .eliminarButton:hover {
     background-color: #f73636 !important;
 }
+
+.modalBG{
+    background-color: #222226 !important;
+}
+
+.dark-modal .modal-content {
+    background-color: #222226; 
+    color: white;
+  }
+  
+  .dark-modal .modal-header,
+  .dark-modal .modal-footer {
+    border-color: #222226;
+  }
+  

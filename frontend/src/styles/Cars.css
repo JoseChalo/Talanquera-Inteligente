@@ -8,3 +8,28 @@
     color: #FFF;
     padding: 50px;
 }
+
+
+
+.editarButton {
+    background-color: orange !important;
+    border: none !important;
+    margin-left: 85px;
+    margin-top: 30px;
+    font-weight: bold !important;
+}
+
+.eliminarButton{
+    background-color: #cf1515 !important;
+    border: none !important;
+    margin-top: 30px;
+    font-weight: bold !important;
+}
+
+.editarButton:hover {
+    background-color: #f5bd4e !important;
+}
+
+.eliminarButton:hover {
+    background-color: #f73636 !important;
+}

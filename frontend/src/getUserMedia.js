@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
 const CameraCapture = () => {
@@ -98,3 +98,8 @@ const CameraCapture = () => {
 };
 
 export default CameraCapture;
+
+
+// GetAllCars: https://8whj3n8d29.execute-api.us-east-2.amazonaws.com/get/getCars
+// UpdateResidents: https://4wufzl5q64.execute-api.us-east-2.amazonaws.com/update/updateResident
+// Delete Resident: https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteResident
