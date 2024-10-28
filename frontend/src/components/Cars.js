@@ -12,7 +12,7 @@ function Cars() {
   // Función para obtener carros
   const fetchCars = async () => {
     try {
-      const response = await fetch('https://8whj3n8d29.execute-api.us-east-2.amazonaws.com/get/getCars', {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getCars', {
         method: 'POST',
         body: JSON.stringify({
           matricula: '*',
@@ -37,8 +37,12 @@ function Cars() {
     fetchCars();
   }, []);
 
-  const handleClick = () => {
-    navigate('/EditCars');
+  const newCar = () => {
+    navigate('/RegisterCars');
+  };
+
+  const handleClick = (car) => {
+    navigate('/EditCars', { state: { car } });
   };
 
   const handleDeleteClick = (car) => {
@@ -49,9 +53,12 @@ function Cars() {
   const confirmDelete = async () => {
     if (carToDelete) {
       try {
-        const response = await fetch('https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteCar', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteCar', {
           method: 'POST',
-          body: JSON.stringify({ matricula: carToDelete.matricula }),
+          body: JSON.stringify({ 
+            matricula: carToDelete.matricula,
+            DPI: carToDelete.idResidente
+           }),
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -61,9 +68,11 @@ function Cars() {
           setShowModal(false); // Cerrar el modal después de actualizar la lista
         } else {
           console.error('Error al eliminar vehículo:', response.statusText);
+          alert('Error al eliminar vehículo: ' + response.statusText);
         }
       } catch (error) {
         console.error('Error al eliminar vehículo:', error);
+        alert('Error al eliminar vehículo: ' + error.message);
       }
     }
   };
@@ -73,14 +82,14 @@ function Cars() {
       <Container className='cars-container'>
         <div className="title-and-button">
           <h2>Vehículos Registrados</h2>
-          <Button variant="primary" onClick={handleClick} className="register-button">
+          <Button variant="primary" onClick={newCar} className="register-button">
             Registrar nuevo automóvil
           </Button>
         </div>
         <Table striped bordered hover variant="dark">
           <thead>
             <tr>
-              <th>DPI</th>
+              <th>DPI del propietario</th>
               <th>Modelo</th>
               <th>Color</th>
               <th>Matrícula</th>
@@ -95,13 +104,13 @@ function Cars() {
                 <td>{car.color}</td>
                 <td>
                   <img
-                    src={car.imagenPlaca}
+                    src={car.credencialesVehiculo}
                     alt="Fotografía del carro"
                     style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                   />
                 </td>
                 <td>
-                  <Button className='editarButton' onClick={() => handleClick()}>Editar</Button>{' '}
+                  <Button className='editarButton' onClick={() => handleClick(car)}>Editar</Button>{' '}
                   <Button className='eliminarButton' onClick={() => handleDeleteClick(car)}>Eliminar</Button>
                 </td>
               </tr>

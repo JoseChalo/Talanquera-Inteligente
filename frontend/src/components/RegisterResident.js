@@ -9,6 +9,7 @@ function RegisterResident() {
   const [phone, setPhone] = useState('');
   const [image, setImage] = useState(null);
   const [numHome, setNumHome] = useState('');
+  const [nameCluster, setCluster] = useState('');
   const videoRef = useRef(null);
   const navigate = useNavigate();
 
@@ -53,7 +54,7 @@ function RegisterResident() {
   const newResident = async () => {
     if (image) {
       try {
-        const response = await fetch('https://7b6zwn6w30.execute-api.us-east-2.amazonaws.com/face/saveFace', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveNewResident', {
           method: 'POST',
           body: JSON.stringify({ 
             image: image,
@@ -61,6 +62,7 @@ function RegisterResident() {
             DPI: dpi,
             phone: phone,
             numHome: numHome,
+            cluster: nameCluster,
             S3_BUCKET_NAME: "imagenes-talanquera-inteligente"
           }),
           headers: {
@@ -153,9 +155,17 @@ function RegisterResident() {
 
 
             <Form.Group controlId="number" className="formMargin">
-              <Form.Label>Número de casa</Form.Label>
+              <Form.Label>Nombre del cluster</Form.Label>
               <Form.Control
                 type="text"
+                placeholder="Ingresa el nombre del cluster"
+                value={nameCluster}
+                onChange={(e) => setCluster(e.target.value)}
+                required
+              />
+              <Form.Label>Número de casa</Form.Label>
+              <Form.Control
+                type="number"
                 placeholder="Ingresa el número de casa"
                 value={numHome}
                 onChange={(e) => setNumHome(e.target.value)}

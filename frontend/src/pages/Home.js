@@ -32,7 +32,7 @@ function Home() {
       setError(null);
       setServerResponse(null);
 
-      const response = await fetch('https://gh8bben0sg.execute-api.us-east-2.amazonaws.com/search/residentFaceID', {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/residentFaceID', {
         method: 'POST',
         body: JSON.stringify({ 
           image: image,

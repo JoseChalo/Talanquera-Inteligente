@@ -24,6 +24,7 @@ function AppRoutes() {
         <Route path="/camara" element={<CameraCapture />} />
         <Route path="/EditResident" element={<EditResident/>} />
         <Route path="/EditCars" element={<EditCars/>} />
+        <Route path="/RegisterCars" element={<RegisterCars/>} />
       </Routes>
     </Router>
   );

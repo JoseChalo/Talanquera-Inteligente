@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterResident.css';
 
 function EditResident() {
@@ -9,27 +9,24 @@ function EditResident() {
   const [phone, setPhone] = useState('');
   const [image, setImage] = useState(null);
   const [numHome, setNumHome] = useState('');
+  const [cluster, setCluster] = useState('');
   const videoRef = useRef(null);
   const navigate = useNavigate();
-  const { residentDPI } = useParams(); // DPI del residente a editar
+  const location = useLocation();
+  const resident = location.state?.resident;
 
   // Obtener los datos del residente actual al cargar la página
   useEffect(() => {
-    const fetchResidentData = async () => {
-      try {
-        const response = await fetch(`https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getDataBase/getAllResidents/${residentDPI}`);
-        const data = await response.json();
-        setName(data.name);
-        setDpi(data.DPI);
-        setPhone(data.phone);
-        setNumHome(data.numHome);
-        setImage(data.image); // Esta imagen será la URL de S3
-      } catch (error) {
-        console.error('Error al obtener datos del residente:', error);
-      }
-    };
-    fetchResidentData();
-  }, [residentDPI]);
+    console.log(resident);
+    if (resident) {
+      setName(resident.nombre || ''); // Asegura que siempre es una cadena
+      setDpi(resident.dpi || '');
+      setPhone(resident.numTelefono || '');
+      setNumHome(resident.numCasa || '');
+      setCluster(resident.cluster || '');
+      setImage(resident.datoBiometrico || null);
+    }
+  }, [resident]);
 
   // Iniciar la cámara
   useEffect(() => {
@@ -66,13 +63,14 @@ function EditResident() {
   const updateResident = async () => {
     if (image) {
       try {
-        const response = await fetch('https://4wufzl5q64.execute-api.us-east-2.amazonaws.com/update/updateResident', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/updateResident', {
           method: 'POST',
           body: JSON.stringify({
             nombre: name,
             DPI: dpi,
             telefono: phone,
             numHome: numHome,
+            cluster: cluster,
             image: image,
           }),
           headers: {
@@ -132,6 +130,7 @@ function EditResident() {
                   setDpi(value);
                 }}
                 maxLength={15}
+                readOnly
                 required
               />
             </Form.Group>
@@ -148,9 +147,17 @@ function EditResident() {
             </Form.Group>
 
             <Form.Group controlId="number" className="formMargin">
-              <Form.Label>Número de casa</Form.Label>
+              <Form.Label>Nombre del cluster</Form.Label>
               <Form.Control
                 type="text"
+                placeholder="Ingresa el nombre del cluster"
+                value={cluster}
+                onChange={(e) => setCluster(e.target.value)}
+                required
+              />
+              <Form.Label>Número de casa</Form.Label>
+              <Form.Control
+                type="number"
                 placeholder="Ingresa el número de casa"
                 value={numHome}
                 onChange={(e) => setNumHome(e.target.value)}

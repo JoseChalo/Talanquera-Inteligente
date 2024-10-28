@@ -1,80 +1,113 @@
-CREATE DATABASE Talanquera_Inteligente
-use Talanquera_Inteligente
+CREATE DATABASE Talanquera_Inteligente;
+use Talanquera_Inteligente;
+use rdsadmin;
 
+DROP DATABASE Talanquera_Inteligente;
 
-CREATE TABLE vivienda(
-    numVivienda INT IDENTITY(1,1),
-    PRIMARY KEY (numVivienda)
+CREATE TABLE vivienda (
+    idVivienda INT IDENTITY(1,1),
+    numCasa INT,
+    cluster VARCHAR(100),
+    PRIMARY KEY (idVivienda)
 );
 
-
-
-DROP TABLE residentes;
-CREATE TABLE residentes(
-    nombre VARCHAR(100),
+CREATE TABLE residentes (
     dpi VARCHAR(15),
+    nombre VARCHAR(100),
     numTelefono VARCHAR(9),
-    data_Biometrico VARCHAR(MAX),
-    numVivienda INT NOT NULL,
+    datoBiometrico VARCHAR(MAX),
+    idVivienda INT NOT NULL,
+    estado int CHECK (estado IN (0, 1)),    -- 1 enable y 0 disabled
     PRIMARY KEY (dpi),
-    FOREIGN KEY (numVivienda) REFERENCES vivienda
+    FOREIGN KEY (idVivienda) REFERENCES vivienda(idVivienda)
 );
 
-CREATE TABLE visitas(
-    idVisita int IDENTITY(1,1),
+CREATE TABLE visitas (
+    idVisita INT IDENTITY(1,1),
+    idViviendaDestino INT, 
     dpi VARCHAR(15),
-    nombre VARCHAR(100),
-    biometricos VARCHAR(MAX),
-    matricula VARCHAR(MAX),
-    PRIMARY KEY (idVisita)
+    metodoIngreso VARCHAR(10) CHECK (metodoIngreso IN ('Peatonal', 'Vehicular')),
+    datoBiometrico VARCHAR(MAX),
+    matriculaVehiculo VARCHAR(7),
+    PRIMARY KEY (idVisita),
+    FOREIGN KEY (idViviendaDestino) REFERENCES vivienda(idVivienda),
+    FOREIGN KEY (dpi) REFERENCES residentes(dpi)
 );
 
-CREATE TABLE automovil(
-    matricula VARCHAR(40),
+CREATE TABLE automovil (
+    matricula VARCHAR(7),
     modelo VARCHAR(30),
     color VARCHAR(30),
+    credencialesVehiculo VARCHAR(MAX),
     PRIMARY KEY (matricula)
 );
 
-CREATE table residentes_automovil(
-    idResidente INT,
-    matricula VARCHAR(40),
-    PRIMARY KEY (idResidente),
-    FOREIGN KEY (matricula) REFERENCES automovil
+CREATE TABLE residentes_automovil (
+    idResidente VARCHAR(15),
+    matricula VARCHAR(7),
+    PRIMARY KEY (idResidente, matricula),
+    FOREIGN KEY (idResidente) REFERENCES residentes(dpi),
+    FOREIGN KEY (matricula) REFERENCES automovil(matricula)
 );
-
-CREATE TABLE vivienda_visitas(
-    numVivienda INT,
-    idVisita INT, 
-    PRIMARY KEY (numVivienda),
-    FOREIGN KEY (idVisita) REFERENCES visitas
-);
-
 
 ---------------------------------------------------------------------------------------------
 
 -- Insertar datos en la tabla vivienda sin especificar el valor de la columna autoincrementable
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
-INSERT INTO vivienda
-DEFAULT VALUES;
+INSERT INTO vivienda (numCasa, cluster) VALUES
+(1, 'Alamos'),
+(2, 'Alamos'),
+(3, 'Alamos'),
+(4, 'Alamos'),
+(5, 'Alamos'),
+(6, 'Alamos'),
+(7, 'Alamos'),
+(8, 'Alamos'),
+(9, 'Alamos'),
+(10, 'Alamos'),
+(11, 'Alamos'),
+(12, 'Alamos'),
+(13, 'Alamos'),
+(14, 'Alamos'),
+(15, 'Alamos'),
+
+(1, 'Robles'),
+(2, 'Robles'),
+(3, 'Robles'),
+(4, 'Robles'),
+(5, 'Robles'),
+(6, 'Robles'),
+(7, 'Robles'),
+(8, 'Robles'),
+(9, 'Robles'),
+(10, 'Robles'),
+(11, 'Robles'),
+(12, 'Robles'),
+(13, 'Robles'),
+(14, 'Robles'),
+(15, 'Robles'),
+
+(1, 'Cedros'),
+(2, 'Cedros'),
+(3, 'Cedros'),
+(4, 'Cedros'),
+(5, 'Cedros'),
+(6, 'Cedros'),
+(7, 'Cedros'),
+(8, 'Cedros'),
+(9, 'Cedros'),
+(10, 'Cedros'),
+(11, 'Cedros'),
+(12, 'Cedros'),
+(13, 'Cedros'),
+(14, 'Cedros'),
+(15, 'Cedros');
 
 use Talanquera_Inteligente;
+
 SELECT * FROM residentes;
 SELECT * FROM vivienda;
+SELECT * FROM automovil;
+SELECT * FROM residentes_automovil;
+
+
+SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda, V.cluster  FROM residentes R INNER JOIN vivienda V ON R.idVivienda = V.idVivienda WHERE estado = 1;

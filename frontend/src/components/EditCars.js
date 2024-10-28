@@ -7,12 +7,12 @@ function EditCars() {
   const [dpi, setDpi] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
-  const [numero, setNumero] = useState('');
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const car = location.state?.car;
 
   // Iniciar la cámara
   useEffect(() => {
@@ -36,24 +36,13 @@ function EditCars() {
 
   // Obtener los datos del vehículo al cargar la página
   useEffect(() => {
-    const fetchCarData = async () => {
-      const matricula = location.state?.matricula; // Obtener la matrícula de la navegación
-      if (matricula) {
-        try {
-          const response = await fetch(`https://api-url.com/getCar/${matricula}`);
-          const data = await response.json();
-          setDpi(data.DPI);
-          setModel(data.modelo);
-          setColor(data.color);
-          setNumero(data.numero);
-          setImage(data.matriculaImagen);
-        } catch (error) {
-          console.error('Error al cargar los datos del vehículo:', error);
-        }
-      }
-    };
-    fetchCarData();
-  }, [location.state]);
+    if(car){
+      setDpi(car.idResidente || '');
+      setModel(car.modelo || '');
+      setColor(car.color);
+      setImage(car.credencialesVehiculo);
+    }
+  }, [car]);
 
   // Capturar una nueva imagen
   const captureImage = () => {
@@ -83,14 +72,14 @@ function EditCars() {
   const updateCar = async () => {
     if (image) {
       try {
-        const response = await fetch('https://api-url.com/updateCar', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/updateCar', {
           method: 'POST',
           body: JSON.stringify({
             DPI: dpi,
-            matricula: image,
+            credencialesVehiculo: image,
             modelo: model,
             color: color,
-            numero: numero
+            matricula: car.matricula
           }),
           headers: {
             'Content-Type': 'application/json'
@@ -109,7 +98,7 @@ function EditCars() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!dpi || !model || !color || !numero) {
+    if (!dpi || !model || !color) {
       alert('Por favor completa todos los campos.');
       return;
     }
@@ -132,8 +121,15 @@ function EditCars() {
                 type="text"
                 placeholder="Ingresa el DPI"
                 value={dpi}
-                onChange={(e) => setDpi(e.target.value)}
                 required
+                readOnly
+              />
+              <Form.Control
+                type="text"
+                placeholder="Ingresa el DPI"
+                value={car.matricula}
+                required
+                readOnly
               />
             </Form.Group>
 
@@ -155,17 +151,6 @@ function EditCars() {
                 placeholder="Ingresa el color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formColor" className="formMargin">
-              <Form.Label>Número</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el número"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
                 required
               />
             </Form.Group>

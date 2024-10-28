@@ -7,7 +7,6 @@ function RegisterCars() {
   const [dpi, setDpi] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
-  const [numero, setNumero] = useState('');
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null); // Para almacenar el stream de la cámara
@@ -62,14 +61,13 @@ function RegisterCars() {
   const newCar = async () => {
     if (image) {
       try {
-        const response = await fetch('https://kcxa2xedhl.execute-api.us-east-2.amazonaws.com/save/saveCar', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveCar', {
           method: 'POST',
           body: JSON.stringify({
             DPI: dpi,
             matricula: image,  // Enviar la imagen de la matrícula
             modelo: model,
             color: color,
-            numero: numero
           }),
           headers: {
             'Content-Type': 'application/json'
@@ -88,7 +86,7 @@ function RegisterCars() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!dpi || !model || !color || !numero) {
+    if (!dpi || !model || !color) {
       alert('Por favor completa todos los campos.');
       return;
     }
@@ -97,11 +95,6 @@ function RegisterCars() {
       stopCamera(); // Apagar la cámara antes de navegar
       navigate('/Cars');
     });
-  };
-
-  // Función para editar el vehículo
-  const handleEditCar = () => {
-    navigate('/EditCars', { state: { matricula: image } });
   };
 
   return (
@@ -143,17 +136,6 @@ function RegisterCars() {
               />
             </Form.Group>
 
-            <Form.Group controlId="formColor" className="formMargin">
-              <Form.Label>Número</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el número"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
-                required
-              />
-            </Form.Group>
-
             <Button className="custom-button" type="submit">
               Registrar
             </Button>
@@ -165,14 +147,7 @@ function RegisterCars() {
             <Button variant="success" onClick={captureImage} className="capture-button">
               Tomar Foto
             </Button>
-            {image && (
-              <>
-                <img src={image} alt="Captura" className="captured-image" />
-                <Button variant="warning" onClick={handleEditCar} className="edit-button">
-                  Editar
-                </Button>
-              </>
-            )}
+            {image && <img src={image} alt="Captura" className="captured-image" />}
           </div>
         </div>
       </Container>

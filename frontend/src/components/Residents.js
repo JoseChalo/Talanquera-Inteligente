@@ -12,7 +12,7 @@ function Residents() {
   // Función para obtener residentes
   const fetchResidents = async () => {
     try {
-      const response = await fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getDataBase/getAllResidents', {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getResidents', {
         method: 'POST',
         body: JSON.stringify({ DPI: '*' }),
         headers: { 'Content-Type': 'application/json' },
@@ -45,7 +45,7 @@ function Residents() {
   const confirmDelete = async () => {
     if (residentToDelete) {
       try {
-        const response = await fetch('https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteResident', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteResident', {
           method: 'POST', // Cambiado a POST
           body: JSON.stringify({ DPI: residentToDelete.dpi }),
           headers: { 'Content-Type': 'application/json' },
@@ -77,6 +77,7 @@ function Residents() {
               <th>Nombre</th>
               <th>DPI</th>
               <th>Teléfono</th>
+              <th>Cluster</th>
               <th>Número de casa</th>
               <th>Fotografía</th>
               <th>Acciones</th>
@@ -88,10 +89,11 @@ function Residents() {
                 <td>{resident.nombre}</td>
                 <td>{resident.dpi}</td>
                 <td>{resident.numTelefono}</td>
-                <td>{resident.numVivienda}</td>
+                <td>{resident.cluster}</td>
+                <td>{resident.numCasa}</td>
                 <td>
                   <img 
-                    src={`${resident.data_Biometrico}?t=${Date.now()}`} 
+                    src={`${resident.datoBiometrico}?t=${Date.now()}`} 
                     alt="Fotografía del residente" 
                     style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
                   />
