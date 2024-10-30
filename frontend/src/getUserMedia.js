@@ -31,14 +31,18 @@ const CameraCapture = () => {
   };*/
 
   const testFetch = async () => {
-    await fetch(' https://uf6utiuosc.execute-api.us-east-2.amazonaws.com/save/saveVisit', {
+    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteVisit', {
       method: 'POST',
       body: JSON.stringify({ 
-        DPI: "2675 88259 0101",
-        modelo: "mazda",
-        color: "gris",
-        matricula: image,
-        numero: 1
+        dpiVisita: "2675 88259 0101",
+        nombreVisita: "Alejandra Nazareth",
+        dpiResidente: "3826 20704 0101",
+        clusterDestino: "Alamos",
+        numViviendaDestino: "1",
+        metodoIngreso: "Peatonal",
+        datoBiometrico: image,
+        matriculaVehiculo: ' ',
+        numIngresos: "4"
       }),
       headers: {
         'Content-Type': 'application/json'

@@ -23,15 +23,18 @@ CREATE TABLE residentes (
 );
 
 CREATE TABLE visitas (
-    idVisita INT IDENTITY(1,1),
-    idViviendaDestino INT, 
-    dpi VARCHAR(15),
+    dpiVisita VARCHAR(15),
+    nombreVisita VARCHAR(60),
+    idViviendaDestino INT NOT NULL,
+    dpiResidente VARCHAR(15),
     metodoIngreso VARCHAR(10) CHECK (metodoIngreso IN ('Peatonal', 'Vehicular')),
     datoBiometrico VARCHAR(MAX),
-    matriculaVehiculo VARCHAR(7),
-    PRIMARY KEY (idVisita),
+    matriculaVehiculo VARCHAR(12),
+    numIngresos INT CHECK (numIngresos >= 0),
+    estado Int CHECK (estado IN (0, 1)),    -- 1 enable y 0 disabled
+    PRIMARY KEY (dpiVisita),
     FOREIGN KEY (idViviendaDestino) REFERENCES vivienda(idVivienda),
-    FOREIGN KEY (dpi) REFERENCES residentes(dpi)
+    FOREIGN KEY (dpiResidente) REFERENCES residentes(dpi),
 );
 
 CREATE TABLE automovil (
@@ -39,6 +42,7 @@ CREATE TABLE automovil (
     modelo VARCHAR(30),
     color VARCHAR(30),
     credencialesVehiculo VARCHAR(MAX),
+    estado Int CHECK (estado IN (0, 1)),    -- 1 enable y 0 disabled
     PRIMARY KEY (matricula)
 );
 
@@ -108,6 +112,9 @@ SELECT * FROM residentes;
 SELECT * FROM vivienda;
 SELECT * FROM automovil;
 SELECT * FROM residentes_automovil;
+SELECT * FROM visitas;
+
+DROP TABLE visitas;
 
 
 SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda, V.cluster  FROM residentes R INNER JOIN vivienda V ON R.idVivienda = V.idVivienda WHERE estado = 1;
