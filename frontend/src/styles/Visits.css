@@ -8,3 +8,30 @@
     color: #FFF;
     padding: 50px;
 }
+
+.register-visit-button{
+    background-color: #506b1a !important;
+    border: none !important;
+    font-weight: bold !important;
+    margin-right: 20px !important;
+}
+
+
+.register-visit-button:hover {
+background-color: #74913a !important;
+}
+
+.modalBG{
+    background-color: #222226 !important;
+}
+
+.dark-modal .modal-content {
+    background-color: #222226; 
+    color: white;
+  }
+  
+  .dark-modal .modal-header,
+  .dark-modal .modal-footer {
+    border-color: #222226;
+  }
+  

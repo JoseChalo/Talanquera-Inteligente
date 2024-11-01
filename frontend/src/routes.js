@@ -9,6 +9,7 @@ import RegisterCars from './components/RegisterCars';
 import CameraCapture from './getUserMedia';
 import EditResident from './components/EditResident';
 import EditCars from './components/EditCars'
+import EditVisit from './components/EditVisit'
 
 function AppRoutes() {
   return (
@@ -24,7 +25,7 @@ function AppRoutes() {
         <Route path="/camara" element={<CameraCapture />} />
         <Route path="/EditResident" element={<EditResident/>} />
         <Route path="/EditCars" element={<EditCars/>} />
-        <Route path="/RegisterCars" element={<RegisterCars/>} />
+        <Route path="/EditVisit" element={<EditVisit/>} />
       </Routes>
     </Router>
   );
