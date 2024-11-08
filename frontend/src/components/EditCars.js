@@ -124,13 +124,7 @@ function EditCars() {
                 required
                 readOnly
               />
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el DPI"
-                value={car.matricula}
-                required
-                readOnly
-              />
+
             </Form.Group>
 
             <Form.Group controlId="formModel" className="formMargin">

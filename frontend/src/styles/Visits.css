@@ -9,6 +9,11 @@
     padding: 50px;
 }
 
+.visit-container table th, .visit-container table td {
+    text-align: center;
+    vertical-align: middle;
+}
+  
 .register-visit-button{
     background-color: #506b1a !important;
     border: none !important;
@@ -16,6 +21,26 @@
     margin-right: 20px !important;
 }
 
+.editarButtonV {
+    background-color: orange !important;
+    border: none !important;
+    font-weight: bold !important;
+}
+
+.eliminarButtonV {
+    background-color: #cf1515 !important;
+    margin-left: 2px;
+    border: none !important;
+    font-weight: bold !important;
+}
+
+.editarButtonV:hover {
+    background-color: #f5bd4e !important;
+}
+
+.eliminarButtonV:hover {
+    background-color: #f73636 !important;
+}
 
 .register-visit-button:hover {
 background-color: #74913a !important;
@@ -28,10 +53,9 @@ background-color: #74913a !important;
 .dark-modal .modal-content {
     background-color: #222226; 
     color: white;
-  }
+}
   
-  .dark-modal .modal-header,
-  .dark-modal .modal-footer {
+.dark-modal .modal-header,
+.dark-modal .modal-footer {
     border-color: #222226;
-  }
-  
+}

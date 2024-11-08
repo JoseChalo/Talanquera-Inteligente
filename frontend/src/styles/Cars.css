@@ -9,20 +9,20 @@
     padding: 50px;
 }
 
-
-
+.cars-container table th, .cars-container table td {
+    text-align: center;
+    vertical-align: middle;
+}
+  
 .editarButton {
     background-color: orange !important;
     border: none !important;
-    margin-left: 85px;
-    margin-top: 30px;
     font-weight: bold !important;
 }
 
 .eliminarButton{
     background-color: #cf1515 !important;
     border: none !important;
-    margin-top: 30px;
     font-weight: bold !important;
 }
 

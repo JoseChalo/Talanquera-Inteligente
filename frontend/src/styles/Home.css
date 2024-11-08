@@ -1,38 +1,104 @@
 .home-container {
-    padding: 50px;
-    background-color: #242426;
-    color: white;
-    min-height: calc(100vh - 0px);
-    margin-left: -50px;
-  }
-  
-  .home-title {
-    text-align: center;
-    margin-bottom: 20px;
-    margin-left: -50px !important;
-  }
-  
-  .card-container {
-    display: flex;
-    justify-content: space-around;
-    margin-left: -50px;
-  }
-  
-  .card {
-    background-color: #242426 !important;
-    color: #FFFFFF !important;
-    width: 200px;
-    height: 200px;
-    text-align: center;
-    border: none !important;
-  }
-  
-  .card-content {
-    margin-top: 10px;
-    margin-left: -50px;
-  }  
-  
-  
-  .response-container {
-    margin-left: 120px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #222226;
+  min-height: 150vh;
+  padding: 2rem;
+}
+
+.card-container {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.card {
+  background: #323539 !important;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.card-content, .camera-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.video-feed {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 200px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor para la foto capturada */
+.captured-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5rem; /* Pos camara*/
+  border-radius: 8px;
+  background-color: #323539;
+  width: 100%;
+  text-align: center;
+  max-height: 400px;
+  min-height: 200px;
+  max-width: 600px !important;
+  min-width: 540px;
+  padding: 1.5rem;
+}
+
+.captured-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+.capture-button {
+  background-color: #17a2b8;
+  border: none;
+  margin-top: 15px;
+  color: #fff !important;
+}
+
+
+.response-container {
+  margin-top: 2rem;
+  text-align: justify;
+  color: #fff;
+  margin-left: -580px;
+}
+
+.response-container h2 {
+  font-size: 1.5rem;
+  color: #ffff;
+}
+
+.table-container {
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.table-container::-webkit-scrollbar {
+  display: none;
+}

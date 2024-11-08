@@ -109,7 +109,17 @@ function RegisterCars() {
                 type="text"
                 placeholder="Ingresa el DPI"
                 value={dpi}
-                onChange={(e) => setDpi(e.target.value)}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, ''); 
+                  if (value.length > 4) {
+                    value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                  }
+                  if (value.length > 9) {
+                    value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                  }
+                  setDpi(value);
+                }}
+                maxLength={15}
                 required
               />
             </Form.Group>

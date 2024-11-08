@@ -99,8 +99,8 @@ function Residents() {
                   />
                 </td>
                 <td>
-                  <Button className='editarButton' onClick={() => handleEditClick(resident)}>Editar</Button>
-                  <Button className='eliminarButton' onClick={() => handleDeleteClick(resident)}>Eliminar</Button>
+                  <Button className='editarButtonR' onClick={() => handleEditClick(resident)}>Editar</Button>
+                  <Button className='eliminarButtonR' onClick={() => handleDeleteClick(resident)}>Eliminar</Button>
                 </td>
               </tr>
             ))}

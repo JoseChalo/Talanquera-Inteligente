@@ -31,7 +31,7 @@ const CameraCapture = () => {
   };*/
 
   const testFetch = async () => {
-    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteVisit', {
+    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveCar', {
       method: 'POST',
       body: JSON.stringify({ 
         dpiVisita: "2675 88259 0101",
@@ -42,7 +42,9 @@ const CameraCapture = () => {
         metodoIngreso: "Peatonal",
         datoBiometrico: image,
         matriculaVehiculo: ' ',
-        numIngresos: "4"
+        numIngresos: "4",
+
+        DPI: '*'
       }),
       headers: {
         'Content-Type': 'application/json'

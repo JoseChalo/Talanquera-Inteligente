@@ -9,7 +9,7 @@ function Visits() {
   const [showModal, setShowModal] = useState(false);
   const [visitToDelete, setVisitToDelete] = useState(null);
 
-  // Función para obtener visitas (aun no sirve creo xd cambiar url)
+  // Función para obtener visitas
   const fetchVisits = async () => {
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getVisits', {
@@ -52,7 +52,7 @@ function Visits() {
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteVisit', {
           method: 'POST',
-          body: JSON.stringify({ DPI: visitToDelete.dpiVisita }),
+          body: JSON.stringify({ dpiVisita: visitToDelete.dpiVisita }),
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -95,10 +95,10 @@ function Visits() {
             {visits.map((visit, index) => (
               <tr key={index}>
                 <td>{visit.dpiVisita}</td>
-                <td>{visit.nombre}</td>
+                <td>{visit.nombreVisita}</td>
                 <td>{visit.dpiResidente}</td>
                 <td>{visit.cluster}</td>
-                <td>{visit.numVivienda}</td>
+                <td>{visit.numCasa}</td>
                 <td>{visit.metodoIngreso}</td>
                 <td>
                   <img 
@@ -109,8 +109,8 @@ function Visits() {
                 </td>
                 <td>{visit.numIngresos}</td>
                 <td>
-                  <Button variant="warning" onClick={() => handleEditClick(visit)} className="action-button"> Editar </Button>
-                  <Button variant="danger" onClick={() => handleDeleteClick(visit)} className="action-button">  Eliminar </Button>
+                  <Button className='editarButtonV' onClick={() => handleEditClick(visit)}> Editar </Button>
+                  <Button className='eliminarButtonV' onClick={() => handleDeleteClick(visit)}>  Eliminar </Button>
                 </td>
               </tr>
             ))}
@@ -122,7 +122,7 @@ function Visits() {
           <Modal.Header closeButton>
             <Modal.Title>Confirmación de Eliminación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>¿Estás seguro de que deseas eliminar a {visitToDelete?.nombre}?</Modal.Body>
+          <Modal.Body>¿Estás seguro de que deseas eliminar a {visitToDelete?.nombreVisita}?</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
             <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>

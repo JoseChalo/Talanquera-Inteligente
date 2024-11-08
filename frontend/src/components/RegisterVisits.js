@@ -10,7 +10,6 @@ function RegisterVisits() {
   const [numViviendaDestino, setNumViviendaDestino] = useState('');
   const [metodoIngreso, setMetodoIngreso] = useState('Peatonal');
   const [datoBiometrico, setDatoBiometrico] = useState(null);
-  const [matriculaVehiculo, setMatriculaVehiculo] = useState('');
   const [numIngresos, setNumIngresos] = useState(1);
   const videoRef = useRef(null);
 
@@ -51,8 +50,7 @@ function RegisterVisits() {
           clusterDestino,
           numViviendaDestino,
           metodoIngreso,
-          datoBiometrico: metodoIngreso === 'Peatonal' ? datoBiometrico : ' ',
-          matriculaVehiculo: metodoIngreso === 'Vehicular' ? matriculaVehiculo : ' ',
+          datoBiometrico: datoBiometrico,
           numIngresos
         }),
         headers: {
@@ -67,22 +65,39 @@ function RegisterVisits() {
     }
   };
 
+  
   return (
     <div className='registerVisit'>
       <Container className='register-visit-container'>
         <h2 className="register-title">Registrar Nueva Visita</h2>
         <div className="form-camera-container">
           <Form onSubmit={handleSubmit} className="form-column">
+
+
+
+
             <Form.Group controlId="formDpiVisita">
               <Form.Label>DPI de la Visita</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Ingresa el DPI de la visita"
                 value={dpiVisita}
-                onChange={(e) => setDpiVisita(e.target.value)}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, ''); 
+                  if (value.length > 4) {
+                    value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                  }
+                  if (value.length > 9) {
+                    value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                  }
+                  setDpiVisita(value);
+                }}
+                maxLength={15}
                 required
               />
             </Form.Group>
+
+
 
             <Form.Group controlId="formNombreVisita" className="formMargin">
               <Form.Label>Nombre de la Visita</Form.Label>
@@ -95,16 +110,28 @@ function RegisterVisits() {
               />
             </Form.Group>
 
+
             <Form.Group controlId="formDpiResidente" className="formMargin">
               <Form.Label>DPI del Residente</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Ingresa el DPI del residente"
                 value={dpiResidente}
-                onChange={(e) => setDpiResidente(e.target.value)}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, ''); 
+                  if (value.length > 4) {
+                    value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                  }
+                  if (value.length > 9) {
+                    value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                  }
+                  setDpiResidente(value);
+                }}
+                maxLength={15}
                 required
               />
             </Form.Group>
+
 
             <Form.Group controlId="formClusterDestino" className="formMargin">
               <Form.Label>Cluster Destino</Form.Label>
@@ -117,6 +144,7 @@ function RegisterVisits() {
               />
             </Form.Group>
 
+
             <Form.Group controlId="formNumViviendaDestino" className="formMargin">
               <Form.Label>Número de Vivienda Destino</Form.Label>
               <Form.Control
@@ -128,6 +156,7 @@ function RegisterVisits() {
               />
             </Form.Group>
 
+
             <Form.Group controlId="formMetodoIngreso" className="formMargin">
               <Form.Label>Método de Ingreso</Form.Label>
               <Form.Control as="select" value={metodoIngreso} onChange={(e) => setMetodoIngreso(e.target.value)}>
@@ -136,17 +165,6 @@ function RegisterVisits() {
               </Form.Control>
             </Form.Group>
 
-            {metodoIngreso === 'Vehicular' && (
-              <Form.Group controlId="formMatriculaVehiculo" className="formMargin">
-                <Form.Label>Matrícula del Vehículo</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingresa la matrícula del vehículo"
-                  value={matriculaVehiculo}
-                  onChange={(e) => setMatriculaVehiculo(e.target.value)}
-                />
-              </Form.Group>
-            )}
 
             <Form.Group controlId="formNumIngresos" className="formMargin">
               <Form.Label>Número de Ingresos</Form.Label>
@@ -154,7 +172,13 @@ function RegisterVisits() {
                 type="number"
                 placeholder="Ingresa el número de ingresos"
                 value={numIngresos}
-                onChange={(e) => setNumIngresos(e.target.value)}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  // Par a impar
+                  if (!isNaN(value)) {
+                    setNumIngresos(value % 2 === 0 ? value : value + 1);
+                  }
+                }}
                 required
               />
             </Form.Group>

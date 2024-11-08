@@ -1,67 +1,69 @@
 .title-and-button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .register-button {
-    background-color: #506b1a !important;
-    border: none !important;
-    font-weight: bold !important;
-    margin-right: 20px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-  }
+.register-button {
+  background-color: #506b1a !important;
+  border: none !important;
+  font-weight: bold !important;
+  margin-right: 20px !important;
 
-  .register-button:hover {
-    background-color: #74913a !important;
-  }
+}
+
+.register-button:hover {
+  background-color: #74913a !important;
+}
 
 .residentClass{
-    background-color: #222226;
-    min-height: calc(100vh - 0px);
+  background-color: #222226;
+  min-height: calc(100vh - 0px);
 }
 
 .resident-container {
-    background-color: #222226;
-    color: #FFF;
-    padding: 50px;
+  background-color: #222226;
+  color: #FFF;
+  padding: 50px;
 }
 
-.editarButton {
-    background-color: orange !important;
-    border: none !important;
-    margin-left: 35px;
-    margin-top: 30px;
-    font-weight: bold !important;
+.resident-container table th, .resident-container table td {
+  text-align: center;
+  vertical-align: middle;
 }
 
-.eliminarButton{
-    background-color: #cf1515 !important;
-    border: none !important;
-    margin-top: 30px;
-    font-weight: bold !important;
+.editarButtonR {
+  background-color: orange !important;
+  border: none !important;
+  font-weight: bold !important;
 }
 
-.editarButton:hover {
-    background-color: #f5bd4e !important;
+.eliminarButtonR{
+  background-color: #cf1515 !important;
+  margin-left: 5px;
+  border: none !important;
+  font-weight: bold !important;
 }
 
-.eliminarButton:hover {
-    background-color: #f73636 !important;
+.editarButtonR:hover {
+  background-color: #f5bd4e !important;
+}
+
+.eliminarButtonR:hover {
+  background-color: #f73636 !important;
 }
 
 .modalBG{
-    background-color: #222226 !important;
+  background-color: #222226 !important;
 }
 
 .dark-modal .modal-content {
-    background-color: #222226; 
-    color: white;
-  }
+  background-color: #222226; 
+  color: white;
+}
   
-  .dark-modal .modal-header,
-  .dark-modal .modal-footer {
-    border-color: #222226;
-  }
-  
+.dark-modal .modal-header,
+.dark-modal .modal-footer {
+  border-color: #222226;
+}
