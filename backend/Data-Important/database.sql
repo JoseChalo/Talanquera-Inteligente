@@ -54,16 +54,29 @@ CREATE TABLE residentes_automovil (
     FOREIGN KEY (matricula) REFERENCES automovil(matricula)
 );
 
+CREATE TABLE usuarios (
+    userDPI VARCHAR(15),
+    contra VARCHAR(50),
+    rol VARCHAR(9) CHECK (rol in ('admin', 'garita', 'residente')),
+    PRIMARY KEY (userDPI),
+    FOREIGN KEY (userDPI) REFERENCES residentes(dpi)
+);
 
-CREATE VIEW Visitas_Residentes AS
-SELECT * FROM visitas V INNER JOIN (
-    SELECT V.idVivienda, R.dpi, R.estado as EstadoResidente, V.cluster, V.numCasa FROM residentes R INNER JOIN vivienda V ON V.idVivienda = R.idVivienda 
-) RV ON V.dpiResidente = RV.dpi WHERE V.estado = 1 AND RV.EstadoResidente = 1
+CREATE TABLE historial_Entradas (
+    id INT IDENTITY(1,1) PRIMARY KEY,    
+    dpi VARCHAR(15),              
+    fecha DATE,  
+    hora DATETIME,      
+    direccion VARCHAR(110)             
+);
 
 ---------------------------------------------------------------------------------------------
 
 -- Insertar datos en la tabla vivienda sin especificar el valor de la columna autoincrementable
 INSERT INTO vivienda (numCasa, cluster) VALUES
+(1, 'Administracion'),
+(2, 'Garita'),
+
 (1, 'Alamos'),
 (2, 'Alamos'),
 (3, 'Alamos'),
@@ -112,6 +125,24 @@ INSERT INTO vivienda (numCasa, cluster) VALUES
 (14, 'Cedros'),
 (15, 'Cedros');
 
+INSERT INTO usuarios (userDPI, contra, rol) VALUES 
+('*', 'admin337626', 'admin'),
+('garita', 'garita1234', 'garita');
+
+INSERT INTO residentes (dpi, nombre, numTelefono, datoBiometrico, idVivienda, estado) VALUES
+('*', 'admin', '87654321', 'NULL', 1, 1),
+('garita', 'garita', '12345678', 'NULL', 2, 1);
+
+CREATE VIEW Visitas_Residentes AS
+SELECT * 
+FROM visitas V
+INNER JOIN (
+    SELECT V.idVivienda, R.dpi, R.estado AS EstadoResidente, V.cluster, V.numCasa 
+    FROM residentes R 
+    INNER JOIN vivienda V ON V.idVivienda = R.idVivienda
+) RV ON V.dpiResidente = RV.dpi
+WHERE V.estado = 1 AND RV.EstadoResidente = 1;
+
 use Talanquera_Inteligente;
 
 SELECT * FROM residentes;
@@ -120,6 +151,8 @@ SELECT * FROM automovil;
 SELECT * FROM residentes_automovil;
 SELECT * FROM visitas;
 SELECT * FROM Visitas_Residentes;
+SELECT * FROM usuarios;
+
 
 SELECT * FROM automovil A INNER JOIN residentes_automovil RA ON A.matricula = RA.matricula;
 
@@ -127,13 +160,14 @@ SELECT R.dpi, R.nombre FROM residentes R INNER JOIN
     (SELECT A.matricula, RA.idResidente FROM automovil A INNER JOIN 
     residentes_automovil RA ON A.matricula = RA.matricula) AD 
 ON AD.idResidente = R.dpi
-WHERE R.estado = 1 AND AD.matricula = ''
+WHERE R.estado = 1 AND AD.matricula = '';
 
 SELECT dpiVisita, nombreVisita FROM visitas;
 
 
 SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda, V.cluster  FROM residentes R INNER JOIN vivienda V ON R.idVivienda = V.idVivienda WHERE estado = 1;
 
+-- Consulta para generar UML de entidad relacion en https://app.chartdb.io
 WITH fk_info AS (
     SELECT
         JSON_QUERY(
