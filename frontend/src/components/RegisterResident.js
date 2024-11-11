@@ -54,7 +54,7 @@ function RegisterResident() {
   const newResident = async () => {
     if (image) {
       try {
-        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveNewResident', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveResident', {
           method: 'POST',
           body: JSON.stringify({ 
             image: image,
