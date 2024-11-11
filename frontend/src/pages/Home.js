@@ -40,6 +40,8 @@ function Home() {
       const data = await response.json();
       setServerResponse(data);
 
+      console.log(data);
+
       if (data.dataResident) {
         const recognizedResident = data.dataResident[0];
 

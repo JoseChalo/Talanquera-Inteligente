@@ -11,6 +11,16 @@ import EditResident from './components/EditResident';
 import EditCars from './components/EditCars'
 import EditVisit from './components/EditVisit'
 
+
+// Función para verificar si el usuario está autenticado
+const isAuthenticated = () => !!localStorage.getItem('authToken');
+
+// Componente de ruta protegida
+const ProtectedRoute = ({ element }) => {
+  return isAuthenticated() ? element : <Navigate to="/" replace />;
+};
+
+
 function AppRoutes() {
   return (
     <Router>

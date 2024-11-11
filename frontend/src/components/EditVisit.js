@@ -10,25 +10,23 @@ function EditVisit() {
   const [clusterDestino, setClusterDestino] = useState('');
   const [numViviendaDestino, setNumViviendaDestino] = useState('');
   const [metodoIngreso, setMetodoIngreso] = useState('Peatonal');
-  const [datoBiometrico, setDatoBiometrico] = useState(null);
-  const [matriculaVehiculo, setMatriculaVehiculo] = useState('');
-  const [numIngresos, setNumIngresos] = useState(1);
+  const [datoBiometrico, setDatoBiometrico] = useState('No Foto');
+  const [numIngresos, setNumIngresos] = useState(2);
   const videoRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const visita = location.state?.visita;
+  var visita = location.state?.visita;
 
   // Cargar datos de la visita al iniciar
   useEffect(() => {
     if (visita) {
-      setDpiVisita(visita.dpiVisitante || '');
+      setDpiVisita(visita.dpiVisita || '');
       setNombreVisita(visita.nombreVisita || '');
       setDpiResidente(visita.dpiResidente || '');
-      setClusterDestino(visita.clusterDestino || '');
-      setNumViviendaDestino(visita.numViviendaDestino || '');
-      setMetodoIngreso(visita.metodoIngreso || 'Peatonal');
-      setDatoBiometrico(visita.datoBiometrico || null);
-      setMatriculaVehiculo(visita.matriculaVehiculo || '');
+      setClusterDestino(visita.cluster || '');
+      setNumViviendaDestino(visita.numCasa || '');
+      setMetodoIngreso(visita.metodoIngreso);
+      setDatoBiometrico('No Foto');
       setNumIngresos(visita.numIngresos || 1);
     }
   }, [visita]);
@@ -36,9 +34,19 @@ function EditVisit() {
   // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = stream;
+  
+        // Limpiar el stream al desmontar
+        return () => {
+          stream.getTracks().forEach(track => track.stop());
+        };
+      } catch (error) {
+        console.error("Error al acceder a la cámara:", error);
+      }
     };
+  
     startCamera();
   }, []);
 
@@ -59,25 +67,25 @@ function EditVisit() {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/editVisit', {
           method: 'POST',
           body: JSON.stringify({
-            dpiVisitante: dpiVisita,
-            nombreVisita,
-            dpiResidente,
+            dpiVisita: dpiVisita,
+            nombreVisita: nombreVisita,
+            dpiResidente: dpiResidente,
             idViviendaDestino: numViviendaDestino,
-            metodoIngreso,
-            datoBiometrico,
-            matriculaVehiculo: metodoIngreso === 'Vehicular' ? matriculaVehiculo : '',
-            numIngresos
+            metodoIngreso: metodoIngreso,
+            datoBiometrico: datoBiometrico,
+            numIngresos: numIngresos,
+            clusterDestino: clusterDestino,
+            numViviendaDestino: numViviendaDestino,
+            oldNameVisit: visita.nombreVisita,
+            oldMetodoIngreso: visita.metodoIngreso
           }),
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        const data = await response.json();
-        if (data.message === 'Visitante editado correctamente.') {
-          alert('Visita actualizada con éxito.');
-          navigate('/Visits');
-        }
+        alert((await response.json()).message);
+        navigate('/Visits');
       } catch (error) {
         console.error('Error al actualizar la visita:', error);
       }
@@ -108,7 +116,7 @@ function EditVisit() {
                 placeholder="Ingresa el DPI de la visita"
                 value={dpiVisita}
                 onChange={(e) => setDpiVisita(e.target.value)}
-                required
+                readOnly
               />
             </Form.Group>
 
@@ -164,18 +172,6 @@ function EditVisit() {
               </Form.Control>
             </Form.Group>
 
-            {metodoIngreso === 'Vehicular' && (
-              <Form.Group controlId="formMatriculaVehiculo" className="formMargin">
-                <Form.Label>Matrícula del Vehículo</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingresa la matrícula del vehículo"
-                  value={matriculaVehiculo}
-                  onChange={(e) => setMatriculaVehiculo(e.target.value)}
-                />
-              </Form.Group>
-            )}
-
             <Form.Group controlId="formNumIngresos" className="formMargin">
               <Form.Label>Número de Ingresos</Form.Label>
               <Form.Control
@@ -198,7 +194,7 @@ function EditVisit() {
             <Button variant="success" onClick={captureImage} className="capture-button">
               Tomar Foto
             </Button>
-            {datoBiometrico && <img src={datoBiometrico} alt="Captura" className="captured-image" />}
+            <img src={datoBiometrico !== 'No Foto'? datoBiometrico : `${visita.datoBiometrico}?v=${Date.now()}`} alt="Captura" className="captured-image" />
           </div>
         </div>
       </Container>

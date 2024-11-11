@@ -84,7 +84,7 @@ function Residents() {
             </tr>
           </thead>
           <tbody>
-            {residents.map((resident, index) => (
+            {residents && residents.map((resident, index) => (
               <tr key={index}>
                 <td>{resident.nombre}</td>
                 <td>{resident.dpi}</td>

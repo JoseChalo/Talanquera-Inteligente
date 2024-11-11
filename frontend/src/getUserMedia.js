@@ -31,7 +31,7 @@ const CameraCapture = () => {
   };*/
 
   const testFetch = async () => {
-    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveCar', {
+    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
       method: 'POST',
       body: JSON.stringify({ 
         dpiVisita: "2675 88259 0101",

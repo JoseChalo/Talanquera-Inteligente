@@ -92,7 +92,7 @@ function Visits() {
             </tr>
           </thead>
           <tbody>
-            {visits.map((visit, index) => (
+            {visits && visits.map((visit, index) => (
               <tr key={index}>
                 <td>{visit.dpiVisita}</td>
                 <td>{visit.nombreVisita}</td>

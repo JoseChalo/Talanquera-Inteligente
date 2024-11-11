@@ -19,7 +19,7 @@ function EditResident() {
   useEffect(() => {
     console.log(resident);
     if (resident) {
-      setName(resident.nombre || ''); // Asegura que siempre es una cadena
+      setName(resident.nombre || '');
       setDpi(resident.dpi || '');
       setPhone(resident.numTelefono || '');
       setNumHome(resident.numCasa || '');

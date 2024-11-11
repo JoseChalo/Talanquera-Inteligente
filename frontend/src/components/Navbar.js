@@ -15,7 +15,7 @@ function CustomNavbar() {
             <Nav.Link href="/residents" className="navbar-link">Residentes</Nav.Link>
             <Nav.Link href="/visits" className="navbar-link">Visitas</Nav.Link>
             <Nav.Link href="/cars" className="navbar-link">Vehículos</Nav.Link>
-            <Nav.Link href="/camara" className="navbar-link">Prueba camara</Nav.Link>
+            {/*<Nav.Link href="/camara" className="navbar-link">Prueba camara</Nav.Link>*/}
           </Nav>
         </Navbar.Collapse>
       </Container>

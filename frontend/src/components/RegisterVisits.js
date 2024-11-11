@@ -16,9 +16,19 @@ function RegisterVisits() {
   // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = stream;
+  
+        // Limpiar el stream al desmontar
+        return () => {
+          stream.getTracks().forEach(track => track.stop());
+        };
+      } catch (error) {
+        console.error("Error al acceder a la cámara:", error);
+      }
     };
+  
     startCamera();
   }, []);
 
