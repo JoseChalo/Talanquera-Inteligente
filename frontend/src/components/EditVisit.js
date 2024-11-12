@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterVisits.css';
+import CustomNavbar from './Navbar';
 
 function EditVisit() {
   const [dpiVisita, setDpiVisita] = useState('');
@@ -104,101 +105,105 @@ function EditVisit() {
   };
 
   return (
-    <div className='registerVisit'>
-      <Container className='register-visit-container'>
-        <h2 className='register-title'>Editar Visita</h2>
-        <div className="form-camera-container">
-          <Form onSubmit={handleSubmit} className="form-column">
-            <Form.Group controlId="formDpiVisita">
-              <Form.Label>DPI de la Visita</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el DPI de la visita"
-                value={dpiVisita}
-                onChange={(e) => setDpiVisita(e.target.value)}
-                readOnly
-              />
-            </Form.Group>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='registerVisit'>
+        <Container className='register-visit-container'>
+          <h2 className='register-title'>Editar Visita</h2>
+          <div className="form-camera-container">
+            <Form onSubmit={handleSubmit} className="form-column">
+              <Form.Group controlId="formDpiVisita">
+                <Form.Label>DPI de la Visita</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el DPI de la visita"
+                  value={dpiVisita}
+                  onChange={(e) => setDpiVisita(e.target.value)}
+                  readOnly
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formNombreVisita" className="formMargin">
-              <Form.Label>Nombre de la Visita</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el nombre de la visita"
-                value={nombreVisita}
-                onChange={(e) => setNombreVisita(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formNombreVisita" className="formMargin">
+                <Form.Label>Nombre de la Visita</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el nombre de la visita"
+                  value={nombreVisita}
+                  onChange={(e) => setNombreVisita(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formDpiResidente" className="formMargin">
-              <Form.Label>DPI del Residente</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el DPI del residente"
-                value={dpiResidente}
-                onChange={(e) => setDpiResidente(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formDpiResidente" className="formMargin">
+                <Form.Label>DPI del Residente</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el DPI del residente"
+                  value={dpiResidente}
+                  onChange={(e) => setDpiResidente(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formClusterDestino" className="formMargin">
-              <Form.Label>Cluster Destino</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el cluster destino"
-                value={clusterDestino}
-                onChange={(e) => setClusterDestino(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formClusterDestino" className="formMargin">
+                <Form.Label>Cluster Destino</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el cluster destino"
+                  value={clusterDestino}
+                  onChange={(e) => setClusterDestino(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formNumViviendaDestino" className="formMargin">
-              <Form.Label>Número de Vivienda Destino</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Ingresa el número de vivienda destino"
-                value={numViviendaDestino}
-                onChange={(e) => setNumViviendaDestino(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formNumViviendaDestino" className="formMargin">
+                <Form.Label>Número de Vivienda Destino</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Ingresa el número de vivienda destino"
+                  value={numViviendaDestino}
+                  onChange={(e) => setNumViviendaDestino(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formMetodoIngreso" className="formMargin">
-              <Form.Label>Método de Ingreso</Form.Label>
-              <Form.Control as="select" value={metodoIngreso} onChange={(e) => setMetodoIngreso(e.target.value)}>
-                <option value="Peatonal">Peatonal</option>
-                <option value="Vehicular">Vehicular</option>
-              </Form.Control>
-            </Form.Group>
+              <Form.Group controlId="formMetodoIngreso" className="formMargin">
+                <Form.Label>Método de Ingreso</Form.Label>
+                <Form.Control as="select" value={metodoIngreso} onChange={(e) => setMetodoIngreso(e.target.value)}>
+                  <option value="Peatonal">Peatonal</option>
+                  <option value="Vehicular">Vehicular</option>
+                </Form.Control>
+              </Form.Group>
 
-            <Form.Group controlId="formNumIngresos" className="formMargin">
-              <Form.Label>Número de Ingresos</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Ingresa el número de ingresos"
-                value={numIngresos}
-                onChange={(e) => setNumIngresos(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formNumIngresos" className="formMargin">
+                <Form.Label>Número de Ingresos</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Ingresa el número de ingresos"
+                  value={numIngresos}
+                  onChange={(e) => setNumIngresos(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Button className="custom-button" type="submit">
-              Actualizar
-            </Button>
-          </Form>
+              <Button className="custom-button" type="submit">
+                Actualizar
+              </Button>
+            </Form>
 
-          <div className="camera-column">
-            <Form.Label>Fotografía</Form.Label>
-            <video ref={videoRef} autoPlay className="video-feed" />
-            <Button variant="success" onClick={captureImage} className="capture-button">
-              Tomar Foto
-            </Button>
-            <img src={datoBiometrico !== 'No Foto'? datoBiometrico : `${visita.datoBiometrico}?v=${Date.now()}`} alt="Captura" className="captured-image" />
+            <div className="camera-column">
+              <Form.Label>Fotografía</Form.Label>
+              <video ref={videoRef} autoPlay className="video-feed" />
+              <Button variant="success" onClick={captureImage} className="capture-button">
+                Tomar Foto
+              </Button>
+              <img src={datoBiometrico !== 'No Foto'? datoBiometrico : `${visita.datoBiometrico}?v=${Date.now()}`} alt="Captura" className="captured-image" />
+            </div>
           </div>
-        </div>
-      </Container>
-    </div>
+        </Container>
+      </div>   
+    </>
+
   );
 }
 

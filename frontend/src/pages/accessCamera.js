@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Button, Alert, Table, Card, Container } from 'react-bootstrap';
 import '../styles/Home.css';
+import CustomNavbar from '../components/Navbar'
 
 function Home() {
   const videoRef = useRef(null);
@@ -78,81 +79,86 @@ function Home() {
   }, []);
 
   return (
-    <div className="home-container">
-      <Container className="card-container">
-        <Card className="card">
-          <h2>Historial de Reconocimientos</h2>
-          <div className="card-content table-container">
-            <Table striped bordered hover variant="dark">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>DPI</th>
-                  <th>Confianza</th>
-                  <th>Similitud</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => (
-                  <tr key={index}>
-                    <td>{record.name}</td>
-                    <td>{record.dpi}</td>
-                    <td>{record.confidence}%</td>
-                    <td>{record.similarity}%</td>
-                  </tr>
-                )) : (
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className="home-container">
+        
+        <Container className="card-container">
+          
+          <Card className="card">
+            <h2>Historial de Reconocimientos</h2>
+            <div className="card-content table-container">
+              <Table striped bordered hover variant="dark">
+                <thead>
                   <tr>
-                    <td colSpan="4">No hay registros.</td>
+                    <th>Nombre</th>
+                    <th>DPI</th>
+                    <th>Confianza</th>
+                    <th>Similitud</th>
                   </tr>
-                )}
-              </tbody>
-            </Table>
-          </div>
-        </Card>
+                </thead>
+                <tbody>
+                  {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => (
+                    <tr key={index}>
+                      <td>{record.name}</td>
+                      <td>{record.dpi}</td>
+                      <td>{record.confidence}%</td>
+                      <td>{record.similarity}%</td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan="4">No hay registros.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </Card>
 
-        <Card className="card">
-          <h2>Cámara</h2>
-          <div className="camera-column">
-            <video ref={videoRef} autoPlay className="video-feed" />
-            <Button variant="success" onClick={captureImage} className="capture-button">
-              Tomar Foto
-            </Button>
+          <Card className="card">
+            <h2>Cámara</h2>
+            <div className="camera-column">
+              <video ref={videoRef} autoPlay className="video-feed" />
+              <Button variant="success" onClick={captureImage} className="capture-button">
+                Tomar Foto
+              </Button>
 
 
 
-            {image && (
-              <div className="captured-image-container">
-                <img src={image} alt="Captura" className="captured-image" />
-                <Button variant="info" onClick={searchResident} className="capture-button">
-                  Enviar Foto
-                </Button>
-              </div>
+              {image && (
+                <div className="captured-image-container">
+                  <img src={image} alt="Captura" className="captured-image" />
+                  <Button variant="info" onClick={searchResident} className="capture-button">
+                    Enviar Foto
+                  </Button>
+                </div>
+              )}
+
+
+
+            </div>
+          </Card>
+        </Container>
+
+        {error && <Alert variant="danger">{error}</Alert>}
+        {serverResponse && (
+          <div className="response-container">
+            <h2>Resultados del Reconocimiento</h2>
+            {serverResponse.dataResident.length > 0 ? (
+              serverResponse.dataResident.map((match, index) => (
+                <div key={index}>
+                  <p><strong>Residente:</strong> {match.Face.ExternalImageId}</p>
+                  <p><strong>Confianza:</strong> {match.Face.Confidence.toFixed(2)}%</p>
+                  <p><strong>Similitud:</strong> {match.Similarity.toFixed(2)}%</p>
+                </div>
+              ))
+            ) : (
+              <p>No se encontraron coincidencias.</p>
             )}
-
-
-
           </div>
-        </Card>
-      </Container>
-
-      {error && <Alert variant="danger">{error}</Alert>}
-      {serverResponse && (
-        <div className="response-container">
-          <h2>Resultados del Reconocimiento</h2>
-          {serverResponse.dataResident.length > 0 ? (
-            serverResponse.dataResident.map((match, index) => (
-              <div key={index}>
-                <p><strong>Residente:</strong> {match.Face.ExternalImageId}</p>
-                <p><strong>Confianza:</strong> {match.Face.Confidence.toFixed(2)}%</p>
-                <p><strong>Similitud:</strong> {match.Similarity.toFixed(2)}%</p>
-              </div>
-            ))
-          ) : (
-            <p>No se encontraron coincidencias.</p>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 

@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { useAuth } from '../dataLogin';
 
 const LoginPage = () => {
   const [dpi, setDpi] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth(); 
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log('Intentando acceder datos de usuario');
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getUsers', {
         method: 'POST',
@@ -26,43 +32,49 @@ const LoginPage = () => {
           role: data.rol 
         };
 
-        console.log(user.role);
+        // Guardamos el usuario en localStorage
+        localStorage.setItem('user', JSON.stringify(user));
+        login(data.userDPI, data.rol);
 
+        // Redirigir inmediatamente después de guardar en localStorage
         if(user.role === 'admin' || user.role === 'garita'){
           navigate('/camara');
+        } else if (user.role === 'residente') {
+          navigate('/visits');
+        } else {
+          navigate('/');
         }
         
-        localStorage.setItem('user', JSON.stringify(user));
       } else {
         alert(data.message);
         navigate('/');
       }
     } catch (error) {
       console.error('Error al obtener vehículos:', error);
+      alert('Ocurrió un error. Intenta de nuevo.');
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <input
-        type="text"
-        placeholder="Username"
-        value={dpi}
-        onChange={(e) => setDpi(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Iniciar sesión</button>
-    </div>
+    <Form onSubmit={handleLogin}>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>DPI user</Form.Label>
+        <Form.Control type="text" value={dpi} onChange={(e) => setDpi(e.target.value)} placeholder="Ingresa tu DPI" />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+      </Form.Group>
+      <Button variant="primary" type="submit">
+        Submit
+      </Button>
+    </Form>
   );
 };
 
 export default LoginPage;
+
 
 
 

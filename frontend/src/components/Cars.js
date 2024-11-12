@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cars.css';
+import CustomNavbar from './Navbar';
 
 function Cars() {
   const navigate = useNavigate();
@@ -78,63 +79,66 @@ function Cars() {
   };
 
   return (
-    <div className='carsClass'>
-      <Container className='cars-container'>
-        <div className="title-and-button">
-          <h2>Vehículos Registrados</h2>
-          <Button variant="primary" onClick={newCar} className="register-button">
-            Registrar nuevo automóvil
-          </Button>
-        </div>
-        <Table striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>DPI del propietario</th>
-              <th>Modelo</th>
-              <th>Color</th>
-              <th>Matrícula</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cars.map((car, index) => (
-              <tr key={index}>
-                <td>{car.idResidente}</td>
-                <td>{car.modelo}</td>
-                <td>{car.color}</td>
-                <td>
-                  <img
-                    src={car.credencialesVehiculo}
-                    alt="Fotografía del carro"
-                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                  />
-                </td>
-                <td>
-                  <Button className='editarButton' onClick={() => handleClick(car)}>Editar</Button>{' '}
-                  <Button className='eliminarButton' onClick={() => handleDeleteClick(car)}>Eliminar</Button>
-                </td>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='carsClass'>
+        <Container className='cars-container'>
+          <div className="title-and-button">
+            <h2>Vehículos Registrados</h2>
+            <Button variant="primary" onClick={newCar} className="register-button">
+              Registrar nuevo automóvil
+            </Button>
+          </div>
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>DPI del propietario</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Matrícula</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {cars.map((car, index) => (
+                <tr key={index}>
+                  <td>{car.idResidente}</td>
+                  <td>{car.modelo}</td>
+                  <td>{car.color}</td>
+                  <td>
+                    <img
+                      src={car.credencialesVehiculo}
+                      alt="Fotografía del carro"
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    />
+                  </td>
+                  <td>
+                    <Button className='editarButton' onClick={() => handleClick(car)}>Editar</Button>{' '}
+                    <Button className='eliminarButton' onClick={() => handleDeleteClick(car)}>Eliminar</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
 
-        {/* Modal de confirmación de eliminación */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación de Eliminación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>¿Estás seguro de que deseas eliminar el vehículo con matrícula {carToDelete?.matricula}?</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={confirmDelete}>
-              Eliminar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-    </div>
+          {/* Modal de confirmación de eliminación */}
+          <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación de Eliminación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>¿Estás seguro de que deseas eliminar el vehículo con matrícula {carToDelete?.matricula}?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={confirmDelete}>
+                Eliminar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
+      </div>
+    </>
   );
 }
 

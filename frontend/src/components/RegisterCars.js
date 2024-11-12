@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterResident.css';
+import CustomNavbar from './Navbar';
 
 function RegisterCars() {
   const [dpi, setDpi] = useState('');
@@ -98,70 +99,74 @@ function RegisterCars() {
   };
 
   return (
-    <div className='registerResident'>
-      <Container className='register-resident-container'>
-        <h2 className='register-title'>Registrar Nuevo Automóvil</h2>
-        <div className="form-camera-container">
-          <Form onSubmit={handleSubmit} className="form-column form-spacing">
-            <Form.Group controlId="formDpi">
-              <Form.Label>DPI</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el DPI"
-                value={dpi}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, ''); 
-                  if (value.length > 4) {
-                    value = value.replace(/^(\d{4})(\d)/, '$1 $2');
-                  }
-                  if (value.length > 9) {
-                    value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
-                  }
-                  setDpi(value);
-                }}
-                maxLength={15}
-                required
-              />
-            </Form.Group>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='registerResident'>
+        <Container className='register-resident-container'>
+          <h2 className='register-title'>Registrar Nuevo Automóvil</h2>
+          <div className="form-camera-container">
+            <Form onSubmit={handleSubmit} className="form-column form-spacing">
+              <Form.Group controlId="formDpi">
+                <Form.Label>DPI</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el DPI"
+                  value={dpi}
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, ''); 
+                    if (value.length > 4) {
+                      value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                    }
+                    if (value.length > 9) {
+                      value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                    }
+                    setDpi(value);
+                  }}
+                  maxLength={15}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formModel" className="formMargin">
-              <Form.Label>Modelo</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el modelo"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formModel" className="formMargin">
+                <Form.Label>Modelo</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el modelo"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formColor" className="formMargin">
-              <Form.Label>Color</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formColor" className="formMargin">
+                <Form.Label>Color</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Button className="custom-button" type="submit">
-              Registrar
-            </Button>
-          </Form>
+              <Button className="custom-button" type="submit">
+                Registrar
+              </Button>
+            </Form>
 
-          <div className="camera-column">
-            <Form.Label>Fotografía de la Placa</Form.Label>
-            <video ref={videoRef} autoPlay className="video-feed" />
-            <Button variant="success" onClick={captureImage} className="capture-button">
-              Tomar Foto
-            </Button>
-            {image && <img src={image} alt="Captura" className="captured-image" />}
+            <div className="camera-column">
+              <Form.Label>Fotografía de la Placa</Form.Label>
+              <video ref={videoRef} autoPlay className="video-feed" />
+              <Button variant="success" onClick={captureImage} className="capture-button">
+                Tomar Foto
+              </Button>
+              {image && <img src={image} alt="Captura" className="captured-image" />}
+            </div>
           </div>
-        </div>
-      </Container>
-    </div>
+        </Container>
+      </div>    
+    </>
+
   );
 }
 

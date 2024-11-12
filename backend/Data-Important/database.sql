@@ -59,7 +59,6 @@ CREATE TABLE usuarios (
     contra VARCHAR(50),
     rol VARCHAR(9) CHECK (rol in ('admin', 'garita', 'residente')),
     PRIMARY KEY (userDPI),
-    FOREIGN KEY (userDPI) REFERENCES residentes(dpi)
 );
 
 CREATE TABLE historial_Entradas (
@@ -126,12 +125,10 @@ INSERT INTO vivienda (numCasa, cluster) VALUES
 (15, 'Cedros');
 
 INSERT INTO usuarios (userDPI, contra, rol) VALUES 
-('*', 'admin337626', 'admin'),
+('admin', 'admin337626', 'admin'),
 ('garita', 'garita1234', 'garita');
 
-INSERT INTO residentes (dpi, nombre, numTelefono, datoBiometrico, idVivienda, estado) VALUES
-('*', 'admin', '87654321', 'NULL', 1, 1),
-('garita', 'garita', '12345678', 'NULL', 2, 1);
+DROP TABLE usuarios
 
 CREATE VIEW Visitas_Residentes AS
 SELECT * 

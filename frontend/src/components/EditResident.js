@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterResident.css';
+import CustomNavbar from './Navbar';
 
 function EditResident() {
   const [name, setName] = useState('');
@@ -101,86 +102,89 @@ function EditResident() {
   };
 
   return (
-    <div className='registerResident'>
-      <Container className='register-resident-container'>
-        <h2 className='register-title'>Editar Residente</h2>
-        <div className="form-camera-container">
-          <Form onSubmit={handleSubmit} className="form-column form-spacing">
-            <Form.Group controlId="formName">
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el nombre"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </Form.Group>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='registerResident'>
+        <Container className='register-resident-container'>
+          <h2 className='register-title'>Editar Residente</h2>
+          <div className="form-camera-container">
+            <Form onSubmit={handleSubmit} className="form-column form-spacing">
+              <Form.Group controlId="formName">
+                <Form.Label>Nombre</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el nombre"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formDpi" className="formMargin">
-              <Form.Label>DPI</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el DPI"
-                value={dpi}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, '');
-                  if (value.length > 4) value = value.replace(/^(\d{4})(\d)/, '$1 $2');
-                  if (value.length > 9) value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
-                  setDpi(value);
-                }}
-                maxLength={15}
-                readOnly
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formDpi" className="formMargin">
+                <Form.Label>DPI</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el DPI"
+                  value={dpi}
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 4) value = value.replace(/^(\d{4})(\d)/, '$1 $2');
+                    if (value.length > 9) value = value.replace(/^(\d{4}) (\d{5})(\d)/, '$1 $2 $3');
+                    setDpi(value);
+                  }}
+                  maxLength={15}
+                  readOnly
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formPhone" className="formMargin">
-              <Form.Label>Teléfono</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el teléfono"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 8))}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formPhone" className="formMargin">
+                <Form.Label>Teléfono</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el teléfono"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="number" className="formMargin">
-              <Form.Label>Nombre del cluster</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingresa el nombre del cluster"
-                value={cluster}
-                onChange={(e) => setCluster(e.target.value)}
-                required
-              />
-              <Form.Label>Número de casa</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Ingresa el número de casa"
-                value={numHome}
-                onChange={(e) => setNumHome(e.target.value)}
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="number" className="formMargin">
+                <Form.Label>Nombre del cluster</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresa el nombre del cluster"
+                  value={cluster}
+                  onChange={(e) => setCluster(e.target.value)}
+                  required
+                />
+                <Form.Label>Número de casa</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Ingresa el número de casa"
+                  value={numHome}
+                  onChange={(e) => setNumHome(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Button className="custom-button" type="submit">
-              Actualizar
-            </Button>
-          </Form>
+              <Button className="custom-button" type="submit">
+                Actualizar
+              </Button>
+            </Form>
 
-          <div className="camera-column">
-            <Form.Label>Fotografía</Form.Label>
-            <video ref={videoRef} autoPlay className="video-feed" />
-            <Button variant="success" onClick={captureImage} className="capture-button">
-              Tomar Foto
-            </Button>
-            {image && <img src={image} alt="Captura" className="captured-image" />}
+            <div className="camera-column">
+              <Form.Label>Fotografía</Form.Label>
+              <video ref={videoRef} autoPlay className="video-feed" />
+              <Button variant="success" onClick={captureImage} className="capture-button">
+                Tomar Foto
+              </Button>
+              {image && <img src={image} alt="Captura" className="captured-image" />}
+            </div>
           </div>
-        </div>
-      </Container>
-    </div>
+        </Container>
+      </div>    
+    </>
   );
 }
 

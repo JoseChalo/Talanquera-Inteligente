@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Visits.css';
+import CustomNavbar from './Navbar';
 
 function Visits() {
   const navigate = useNavigate();
@@ -69,67 +70,70 @@ function Visits() {
   };
 
   return (
-    <div className='visitClass'>
-      <Container className='visit-container'>
-        <div className="title-and-button">
-          <h2 className="visits-title">Visitas Registradas</h2>
-          <Button variant="primary" onClick={handleRegisterVisit} className="register-visit-button">
-            Registrar nueva visita
-          </Button>
-        </div>
-        <Table striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>Dpi Visita</th>
-              <th>Nombre</th>
-              <th>Dpi Residente</th>
-              <th>Cluster</th>
-              <th>Vivienda</th>
-              <th>Forma de Ingreso</th>
-              <th>Fotografía</th>
-              <th>Número de Ingresos</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visits && visits.map((visit, index) => (
-              <tr key={index}>
-                <td>{visit.dpiVisita}</td>
-                <td>{visit.nombreVisita}</td>
-                <td>{visit.dpiResidente}</td>
-                <td>{visit.cluster}</td>
-                <td>{visit.numCasa}</td>
-                <td>{visit.metodoIngreso}</td>
-                <td>
-                  <img 
-                    src={`${visit.datoBiometrico}?t=${Date.now()}`} 
-                    alt="Fotografía de la visita" 
-                    style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
-                  />
-                </td>
-                <td>{visit.numIngresos}</td>
-                <td>
-                  <Button className='editarButtonV' onClick={() => handleEditClick(visit)}> Editar </Button>
-                  <Button className='eliminarButtonV' onClick={() => handleDeleteClick(visit)}>  Eliminar </Button>
-                </td>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='visitClass'>
+        <Container className='visit-container'>
+          <div className="title-and-button">
+            <h2 className="visits-title">Visitas Registradas</h2>
+            <Button variant="primary" onClick={handleRegisterVisit} className="register-visit-button">
+              Registrar nueva visita
+            </Button>
+          </div>
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>Dpi Visita</th>
+                <th>Nombre</th>
+                <th>Dpi Residente</th>
+                <th>Cluster</th>
+                <th>Vivienda</th>
+                <th>Forma de Ingreso</th>
+                <th>Fotografía</th>
+                <th>Número de Ingresos</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {visits && visits.map((visit, index) => (
+                <tr key={index}>
+                  <td>{visit.dpiVisita}</td>
+                  <td>{visit.nombreVisita}</td>
+                  <td>{visit.dpiResidente}</td>
+                  <td>{visit.cluster}</td>
+                  <td>{visit.numCasa}</td>
+                  <td>{visit.metodoIngreso}</td>
+                  <td>
+                    <img 
+                      src={`${visit.datoBiometrico}?t=${Date.now()}`} 
+                      alt="Fotografía de la visita" 
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
+                    />
+                  </td>
+                  <td>{visit.numIngresos}</td>
+                  <td>
+                    <Button className='editarButtonV' onClick={() => handleEditClick(visit)}> Editar </Button>
+                    <Button className='eliminarButtonV' onClick={() => handleDeleteClick(visit)}>  Eliminar </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
 
-        {/* Modal de confirmación */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación de Eliminación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>¿Estás seguro de que deseas eliminar a {visitToDelete?.nombreVisita}?</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-            <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-    </div>
+          {/* Modal de confirmación */}
+          <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación de Eliminación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>¿Estás seguro de que deseas eliminar a {visitToDelete?.nombreVisita}?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
+              <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
+      </div>
+    </>
   );
 }
 

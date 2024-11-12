@@ -5,8 +5,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (username, role) => {
-    setUser({ username, role });
+  const login = () => {
+    const storedUser = JSON.parse(localStorage.getItem('user')); // Obtiene y parsea el objeto guardado
+    setUser({ user: storedUser.user, role: storedUser.role });
   };
 
   const logout = () => {

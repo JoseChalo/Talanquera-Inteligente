@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Residents.css';
+import CustomNavbar from './Navbar';
 
 function Residents() {
   const navigate = useNavigate();
@@ -65,65 +66,68 @@ function Residents() {
   };
 
   return (
-    <div className='residentClass'>
-      <Container className='resident-container'>
-        <div className="title-and-button">
-          <h2>Residentes Registrados</h2>
-          <Button variant="primary" onClick={handleClick} className="register-button">Registrar nuevo residente</Button>
-        </div>
-        <Table striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>DPI</th>
-              <th>Teléfono</th>
-              <th>Cluster</th>
-              <th>Número de casa</th>
-              <th>Fotografía</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {residents && residents.map((resident, index) => (
-              <tr key={index}>
-                <td>{resident.nombre}</td>
-                <td>{resident.dpi}</td>
-                <td>{resident.numTelefono}</td>
-                <td>{resident.cluster}</td>
-                <td>{resident.numCasa}</td>
-                <td>
-                  <img 
-                    src={`${resident.datoBiometrico}?t=${Date.now()}`} 
-                    alt="Fotografía del residente" 
-                    style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
-                  />
-                </td>
-                <td>
-                  <Button className='editarButtonR' onClick={() => handleEditClick(resident)}>Editar</Button>
-                  <Button className='eliminarButtonR' onClick={() => handleDeleteClick(resident)}>Eliminar</Button>
-                </td>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='residentClass'>
+        <Container className='resident-container'>
+          <div className="title-and-button">
+            <h2>Residentes Registrados</h2>
+            <Button variant="primary" onClick={handleClick} className="register-button">Registrar nuevo residente</Button>
+          </div>
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>DPI</th>
+                <th>Teléfono</th>
+                <th>Cluster</th>
+                <th>Número de casa</th>
+                <th>Fotografía</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {residents && residents.map((resident, index) => (
+                <tr key={index}>
+                  <td>{resident.nombre}</td>
+                  <td>{resident.dpi}</td>
+                  <td>{resident.numTelefono}</td>
+                  <td>{resident.cluster}</td>
+                  <td>{resident.numCasa}</td>
+                  <td>
+                    <img 
+                      src={`${resident.datoBiometrico}?t=${Date.now()}`} 
+                      alt="Fotografía del residente" 
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
+                    />
+                  </td>
+                  <td>
+                    <Button className='editarButtonR' onClick={() => handleEditClick(resident)}>Editar</Button>
+                    <Button className='eliminarButtonR' onClick={() => handleDeleteClick(resident)}>Eliminar</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
 
-        {/* Confirmación */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación de Eliminación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>¿Estás seguro de que deseas eliminar a {residentToDelete?.nombre}?</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={confirmDelete}>
-              Eliminar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-    </div>
+          {/* Confirmación */}
+          <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación de Eliminación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>¿Estás seguro de que deseas eliminar a {residentToDelete?.nombre}?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={confirmDelete}>
+                Eliminar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
+      </div>
+    </>
   );
 }
 
