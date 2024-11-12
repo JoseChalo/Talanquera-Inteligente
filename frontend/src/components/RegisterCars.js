@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterResident.css';
 import CustomNavbar from './Navbar';
@@ -12,6 +12,8 @@ function RegisterCars() {
   const videoRef = useRef(null);
   const streamRef = useRef(null); // Para almacenar el stream de la cámara
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
 
   // Iniciar la cámara
   useEffect(() => {
@@ -61,6 +63,7 @@ function RegisterCars() {
   // Función para enviar los datos
   const newCar = async () => {
     if (image) {
+      setLoading(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveCar', {
           method: 'POST',
@@ -79,6 +82,8 @@ function RegisterCars() {
         console.log('Respuesta del servidor:', data);
       } catch (error) {
         console.error('Error al enviar los datos:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       alert('Toma la foto antes de continuar con el registro.');
@@ -149,9 +154,10 @@ function RegisterCars() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Registrar
+              <Button className="custom-button" type="submit" disabled={loading}>
+              {loading ? ( <><Spinner animation="border" size="sm" /> Cargando...</>) : ('Registrar')}
               </Button>
+              
             </Form>
 
             <div className="camera-column">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Modal, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cars.css';
 import CustomNavbar from './Navbar';
@@ -9,6 +9,7 @@ function Cars() {
   const [cars, setCars] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [carToDelete, setCarToDelete] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   // Función para obtener carros
   const fetchCars = async () => {
@@ -53,6 +54,7 @@ function Cars() {
 
   const confirmDelete = async () => {
     if (carToDelete) {
+      setLoadingDelete(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteCar', {
           method: 'POST',
@@ -74,6 +76,8 @@ function Cars() {
       } catch (error) {
         console.error('Error al eliminar vehículo:', error);
         alert('Error al eliminar vehículo: ' + error.message);
+      } finally {
+        setLoadingDelete(false);
       }
     }
   };
@@ -131,8 +135,8 @@ function Cars() {
               <Button variant="secondary" onClick={() => setShowModal(false)}>
                 Cancelar
               </Button>
-              <Button variant="danger" onClick={confirmDelete}>
-                Eliminar
+              <Button variant="danger" onClick={confirmDelete} disabled={loadingDelete} >
+                {loadingDelete ? ( <><Spinner animation="border" size="sm" /> Eliminando...</>) : ( 'Eliminar' )}
               </Button>
             </Modal.Footer>
           </Modal>

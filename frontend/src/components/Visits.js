@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Modal, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Visits.css';
 import CustomNavbar from './Navbar';
@@ -9,6 +9,7 @@ function Visits() {
   const [visits, setVisits] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [visitToDelete, setVisitToDelete] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   // Función para obtener visitas
   const fetchVisits = async () => {
@@ -50,6 +51,7 @@ function Visits() {
   // Confirmar eliminación
   const confirmDelete = async () => {
     if (visitToDelete) {
+      setLoadingDelete(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteVisit', {
           method: 'POST',
@@ -65,6 +67,9 @@ function Visits() {
         }
       } catch (error) {
         console.error('Error al eliminar visita:', error);
+      }
+      finally {
+        setLoadingDelete(false);
       }
     }
   };
@@ -128,7 +133,9 @@ function Visits() {
             <Modal.Body>¿Estás seguro de que deseas eliminar a {visitToDelete?.nombreVisita}?</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-              <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
+              <Button variant="danger" onClick={confirmDelete} disabled={loadingDelete} >
+                {loadingDelete ? (<><Spinner animation="border" size="sm" /> Eliminando...</>) : ( 'Eliminar' )}
+              </Button>
             </Modal.Footer>
           </Modal>
         </Container>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterResident.css';
 import CustomNavbar from './Navbar';
@@ -14,6 +14,7 @@ function EditCars() {
   const navigate = useNavigate();
   const location = useLocation();
   const car = location.state?.car;
+  const [loading, setLoading] = useState(false);
 
   // Iniciar la cámara
   useEffect(() => {
@@ -72,6 +73,7 @@ function EditCars() {
   // Función para enviar la actualización
   const updateCar = async () => {
     if (image) {
+      setLoading(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/updateCar', {
           method: 'POST',
@@ -91,6 +93,8 @@ function EditCars() {
         console.log('Respuesta del servidor:', data);
       } catch (error) {
         console.error('Error al actualizar los datos:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       alert('Toma la foto antes de continuar con la actualización.');
@@ -152,8 +156,8 @@ function EditCars() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Actualizar
+              <Button className="custom-button" type="submit" disabled={loading}>
+                {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Actualizar')}
               </Button>
             </Form>
 

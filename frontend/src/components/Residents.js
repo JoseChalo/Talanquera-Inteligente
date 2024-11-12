@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Modal, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Residents.css';
 import CustomNavbar from './Navbar';
+
 
 function Residents() {
   const navigate = useNavigate();
   const [residents, setResidents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [residentToDelete, setResidentToDelete] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
 
   // Función para obtener residentes
   const fetchResidents = async () => {
@@ -45,6 +48,7 @@ function Residents() {
 
   const confirmDelete = async () => {
     if (residentToDelete) {
+      setLoadingDelete(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteResident', {
           method: 'POST', // Cambiado a POST
@@ -61,6 +65,8 @@ function Residents() {
         }
       } catch (error) {
         console.error('Error al eliminar residente:', error);
+      } finally {
+        setLoadingDelete(false);
       }
     }
   };
@@ -120,8 +126,8 @@ function Residents() {
               <Button variant="secondary" onClick={() => setShowModal(false)}>
                 Cancelar
               </Button>
-              <Button variant="danger" onClick={confirmDelete}>
-                Eliminar
+              <Button variant="danger" onClick={confirmDelete} disabled={loadingDelete} >
+                {loadingDelete ? (<><Spinner animation="border" size="sm" /> Eliminando...</>) : ( 'Eliminar' )}
               </Button>
             </Modal.Footer>
           </Modal>

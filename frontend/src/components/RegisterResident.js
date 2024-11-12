@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterResident.css'; 
 import CustomNavbar from './Navbar';
+
 
 function RegisterResident() {
   const [name, setName] = useState('');
@@ -16,6 +17,8 @@ function RegisterResident() {
   const [houses, setHouses] = useState([]);
   const videoRef = useRef(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
 
   // Cargar clusters y casas desde Lambda
   useEffect(() => {
@@ -99,6 +102,7 @@ function RegisterResident() {
 
   const newResident = async () => {
     if (image) {
+      setLoading(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveResident', {
           method: 'POST',
@@ -124,6 +128,8 @@ function RegisterResident() {
         console.log('Respuesta del servidor:', data);
       } catch (error) {
         console.error('Error al enviar la imagen:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       alert('Toma la foto antes de seguir con el registro.');
@@ -205,7 +211,6 @@ function RegisterResident() {
                 <Form.Label>Nombre del cluster</Form.Label>
                 <Form.Control
                   as="select"
-                  className="select-css"
                   value={nameCluster}
                   onChange={(e) => setCluster(e.target.value)}
                   required
@@ -221,7 +226,6 @@ function RegisterResident() {
                 <Form.Label>Número de casa</Form.Label>
                 <Form.Control
                   as="select"
-                  className="select-css"
                   value={numHome}
                   onChange={(e) => setNumHome(e.target.value)}
                   required
@@ -244,9 +248,10 @@ function RegisterResident() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Registrar
+              <Button className="custom-button" type="submit" disabled={loading}>
+                {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Registrar')}
               </Button>
+
             </Form>
 
             <div className="camera-column">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import '../styles/RegisterVisits.css'; 
 import CustomNavbar from './Navbar';
 
@@ -14,6 +14,7 @@ function RegisterVisits() {
   const [numIngresos, setNumIngresos] = useState(1);
   const videoRef = useRef(null);
   const { userDPI, } = JSON.parse(localStorage.getItem('user'));
+  const [loading, setLoading] = useState(false);
 
   // Iniciar la cámara
   useEffect(() => {
@@ -194,8 +195,8 @@ function RegisterVisits() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Registrar
+              <Button className="custom-button" type="submit" disabled={loading}>
+                {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Registrar')}
               </Button>
             </Form>
 

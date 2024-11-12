@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterResident.css';
 import CustomNavbar from './Navbar';
@@ -18,6 +18,7 @@ function EditResident() {
   const navigate = useNavigate();
   const location = useLocation();
   const resident = location.state?.resident;
+  const [loading, setLoading] = useState(false);
 
   // Cargar clusters y casas desde Lambda
   useEffect(() => {
@@ -109,6 +110,7 @@ function EditResident() {
 
   const updateResident = async () => {
     if (image) {
+      setLoading(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/updateResident', {
           method: 'POST',
@@ -133,6 +135,8 @@ function EditResident() {
         }
       } catch (error) {
         console.error('Error al actualizar los datos del residente:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       alert('Toma la foto antes de continuar con la actualización.');
@@ -237,8 +241,8 @@ function EditResident() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Actualizar
+              <Button className="custom-button" type="submit" disabled={loading}>
+                {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Actualizar')}
               </Button>
             </Form>
 
