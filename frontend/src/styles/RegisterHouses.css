@@ -1,0 +1,45 @@
+.registerHouse {
+    background-color: #222226;
+    color: #FFF;
+    min-height: calc(100vh - 0px);
+  }
+  
+  .register-house-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .form-column {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+  }
+  
+  .register-title {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .custom-button {
+    background-color: #F6AC27 !important;
+    font-weight: bold !important;
+    color: white;
+    border: none !important;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 170px !important;
+  }
+  
+  .custom-button:hover {
+    background-color: #ff9000 !important;
+  }
+  
+  .custom-button:active {
+    background-color: #ff9100;
+  }  

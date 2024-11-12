@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ element, allowedRoles }) => {
-  const user = JSON.parse(localStorage.getItem('user'));
+const ProtectedRoute = ({ element, rolesAllowed, accessDeniedPath }) => {
+  const [loading, setLoading] = useState(true);
+  const user = JSON.parse(localStorage.getItem('user')); // Obtener usuario
 
-  // Verifica si el usuario está autenticado y tiene el rol necesario
-  if (!user || (allowedRoles && user.role !== allowedRoles)) {
-    console.log('rediorigir a login');
-    return <Navigate to="/accessDenied" />;
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Redirigir a login
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Redirigir a la página de acceso denegado
+  if (rolesAllowed && !rolesAllowed.includes(user.role)) {
+    return <Navigate to={accessDeniedPath || "/accessDenied"} replace />;
   }
 
   return element;

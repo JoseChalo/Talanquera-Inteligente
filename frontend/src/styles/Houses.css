@@ -1,0 +1,35 @@
+.housesClass {
+    background-color: #222226;
+    min-height: calc(100vh - 0px);
+}
+
+.houses-container {
+    background-color: #222226;
+    color: #FFF;
+    padding: 50px;
+}
+
+.houses-container table th, .houses-container table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.editarButton {
+    background-color: orange !important;
+    border: none !important;
+    font-weight: bold !important;
+}
+
+.eliminarButton {
+    background-color: #cf1515 !important;
+    border: none !important;
+    font-weight: bold !important;
+}
+
+.editarButton:hover {
+    background-color: #f5bd4e !important;
+}
+
+.eliminarButton:hover {
+    background-color: #f73636 !important;
+}

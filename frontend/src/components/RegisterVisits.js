@@ -13,6 +13,7 @@ function RegisterVisits() {
   const [datoBiometrico, setDatoBiometrico] = useState(null);
   const [numIngresos, setNumIngresos] = useState(1);
   const videoRef = useRef(null);
+  const dataUser = 
 
   // Iniciar la cámara
   useEffect(() => {

@@ -11,8 +11,55 @@ function RegisterResident() {
   const [image, setImage] = useState(null);
   const [numHome, setNumHome] = useState('');
   const [nameCluster, setCluster] = useState('');
+  const [password, setPassword] = useState('');
+  const [clusters, setClusters] = useState([]);
+  const [houses, setHouses] = useState([]);
   const videoRef = useRef(null);
   const navigate = useNavigate();
+
+  // Cargar clusters y casas desde Lambda
+  useEffect(() => {
+    const fetchHomes = async () => {
+      try {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            opcionSearch: 'AllHomes',
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          const clustersData = [];
+          const housesData = [];
+          
+          // Llenar los clusters y las casas
+          data.data.forEach(item => {
+            if (item.cluster && !clustersData.includes(item.cluster)) {
+              clustersData.push(item.cluster); // Agregar clusters únicos
+            }
+            if (item.numCasa && !housesData.includes(item.numCasa)) {
+              housesData.push(item.numCasa); // Agregar casas únicas
+            }
+          });
+
+          setClusters(clustersData);
+          setHouses(housesData);
+        } else {
+          console.error('Error al obtener los datos de casas:', data.message);
+        }
+      } catch (error) {
+        console.error('Error al realizar la solicitud a Lambda:', error);
+      }
+    };
+
+    fetchHomes();
+  }, []);
+
 
   // Iniciar la cámara
   useEffect(() => {
@@ -32,7 +79,6 @@ function RegisterResident() {
   
     startCamera();
   }, []);
-  
 
   // Capturar la imagen
   const captureImage = () => {
@@ -50,7 +96,6 @@ function RegisterResident() {
       };
     }, 'image/jpeg');
   };
-  
 
   const newResident = async () => {
     if (image) {
@@ -64,6 +109,7 @@ function RegisterResident() {
             phone: phone,
             numHome: numHome,
             cluster: nameCluster,
+            contra: password,
             S3_BUCKET_NAME: "imagenes-talanquera-inteligente"
           }),
           headers: {
@@ -86,7 +132,7 @@ function RegisterResident() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !dpi || !phone || !numHome) {
+    if (!name || !dpi || !phone || !numHome || !nameCluster || !password) {
       alert('Por favor completa todos los campos.');
       return;
     }
@@ -136,7 +182,6 @@ function RegisterResident() {
                 />
               </Form.Group>
 
-
               <Form.Group controlId="formPhone" className="formMargin">
                 <Form.Label>Teléfono</Form.Label>
                 <Form.Control
@@ -156,22 +201,45 @@ function RegisterResident() {
                 />
               </Form.Group>
 
-
-              <Form.Group controlId="number" className="formMargin">
+              <Form.Group controlId="formCluster" className="formMargin">
                 <Form.Label>Nombre del cluster</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresa el nombre del cluster"
+                  as="select"
+                  className="select-css"
                   value={nameCluster}
                   onChange={(e) => setCluster(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Selecciona un cluster</option>
+                  {clusters.map((cluster, index) => (
+                    <option key={index} value={cluster}>{cluster}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="formCasa" className="formMargin">
                 <Form.Label>Número de casa</Form.Label>
                 <Form.Control
-                  type="number"
-                  placeholder="Ingresa el número de casa"
+                  as="select"
+                  className="select-css"
                   value={numHome}
                   onChange={(e) => setNumHome(e.target.value)}
+                  required
+                >
+                  <option value="">Selecciona un número de casa</option>
+                  {houses.map((house, index) => (
+                    <option key={index} value={house}>{house}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="formPassword" className="formMargin">
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Ingresa la contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </Form.Group>

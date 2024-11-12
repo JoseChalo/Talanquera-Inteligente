@@ -1,7 +1,7 @@
 CREATE DATABASE Talanquera_Inteligente;
-use Talanquera_Inteligente;
-use rdsadmin;
+USE Talanquera_Inteligente;
 
+USE rdsadmin;
 -- DROP DATABASE Talanquera_Inteligente;
 
 CREATE TABLE vivienda (
@@ -62,20 +62,18 @@ CREATE TABLE usuarios (
 );
 
 CREATE TABLE historial_Entradas (
-    id INT IDENTITY(1,1) PRIMARY KEY,    
-    dpi VARCHAR(15),              
+    id INT IDENTITY(1,1),    
+    dpi VARCHAR(15),
+    nombre VARCHAR(100),              
     fecha DATE,  
     hora DATETIME,      
-    direccion VARCHAR(110)             
+    PRIMARY KEY (id)             
 );
 
----------------------------------------------------------------------------------------------
+---------------------------------------------------------------- Insertar valores iniciales -------------------------------------------------------------------------------------------------
 
 -- Insertar datos en la tabla vivienda sin especificar el valor de la columna autoincrementable
 INSERT INTO vivienda (numCasa, cluster) VALUES
-(1, 'Administracion'),
-(2, 'Garita'),
-
 (1, 'Alamos'),
 (2, 'Alamos'),
 (3, 'Alamos'),
@@ -128,19 +126,19 @@ INSERT INTO usuarios (userDPI, contra, rol) VALUES
 ('admin', 'admin337626', 'admin'),
 ('garita', 'garita1234', 'garita');
 
-DROP TABLE usuarios
+------------------------------------------------------------ Crear vistas y prototipos de consultas --------------------------------------------------------------------
 
-CREATE VIEW Visitas_Residentes AS
-SELECT * 
-FROM visitas V
+CREATE VIEW Visitas_Residentes AS (
+SELECT * FROM visitas V
 INNER JOIN (
     SELECT V.idVivienda, R.dpi, R.estado AS EstadoResidente, V.cluster, V.numCasa 
     FROM residentes R 
-    INNER JOIN vivienda V ON V.idVivienda = R.idVivienda
-) RV ON V.dpiResidente = RV.dpi
-WHERE V.estado = 1 AND RV.EstadoResidente = 1;
+    INNER JOIN vivienda V ON V.idVivienda = R.idVivienda) RV 
+ON V.dpiResidente = RV.dpi
+WHERE V.estado = 1 AND RV.EstadoResidente = 1);
 
-use Talanquera_Inteligente;
+
+USE Talanquera_Inteligente;
 
 SELECT * FROM residentes;
 SELECT * FROM vivienda;
@@ -149,22 +147,47 @@ SELECT * FROM residentes_automovil;
 SELECT * FROM visitas;
 SELECT * FROM Visitas_Residentes;
 SELECT * FROM usuarios;
+SELECT * FROM historial_Entradas;
+
+SELECT * FROM usuarios U INNER JOIN (
+    SELECT R.dpi, R.nombre, R.numTelefono, 
+        R.datoBiometrico, R.estado, R.idVivienda, 
+        V.cluster, V.numCasa  
+    FROM residentes R 
+        INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
+        WHERE estado = 1) RV 
+ON RV.dpi = U.userDPI;
 
 
-SELECT * FROM automovil A INNER JOIN residentes_automovil RA ON A.matricula = RA.matricula;
+SELECT v.idVivienda, v.numCasa, v.cluster, r.dpi, r.nombre
+FROM vivienda v
+LEFT JOIN residentes r ON v.idVivienda = r.idVivienda;
 
-SELECT R.dpi, R.nombre FROM residentes R INNER JOIN 
-    (SELECT A.matricula, RA.idResidente FROM automovil A INNER JOIN 
-    residentes_automovil RA ON A.matricula = RA.matricula) AD 
+SELECT v.idVivienda, v.numCasa, v.cluster
+FROM vivienda v
+LEFT JOIN residentes r ON v.idVivienda = r.idVivienda
+WHERE r.dpi IS NULL;
+
+SELECT * FROM automovil A 
+INNER JOIN residentes_automovil RA 
+ON A.matricula = RA.matricula;
+
+SELECT R.dpi, R.nombre FROM residentes R INNER JOIN (
+    SELECT A.matricula, RA.idResidente 
+    FROM automovil A 
+    INNER JOIN residentes_automovil RA 
+    ON A.matricula = RA.matricula) AD 
 ON AD.idResidente = R.dpi
 WHERE R.estado = 1 AND AD.matricula = '';
 
 SELECT dpiVisita, nombreVisita FROM visitas;
 
+SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda, V.cluster  
+FROM residentes R 
+INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
+WHERE estado = 1;
 
-SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda, V.cluster  FROM residentes R INNER JOIN vivienda V ON R.idVivienda = V.idVivienda WHERE estado = 1;
-
--- Consulta para generar UML de entidad relacion en https://app.chartdb.io
+----------------------------------------------------- Consulta para generar UML de entidad relacion en https://app.chartdb.io ---------------------------------------------------------------------------
 WITH fk_info AS (
     SELECT
         JSON_QUERY(

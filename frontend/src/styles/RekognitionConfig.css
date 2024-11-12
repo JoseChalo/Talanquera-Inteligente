@@ -1,0 +1,57 @@
+.Rekognition {
+    background-color: #222226;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+  
+video {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+
+
+.buttonTestFetch {
+    background-color: #F59007 !important;
+    border: none !important;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.buttonTestFetch:hover {
+    background-color: #000 !important;
+}
+
+.buttonCaptureImage {
+    background-color: #F59007 !important;
+    border: none !important;
+    margin-bottom: 15px;
+}
+
+.buttonCaptureImage:hover {
+    background-color: #000 !important;
+}
+
+.buttonStartCamera {
+    background-color: #F59007 !important;
+    border: none !important;
+    margin-bottom: 15px;
+}
+
+.buttonStartCamera:hover {
+background-color: #000 !important;
+}  

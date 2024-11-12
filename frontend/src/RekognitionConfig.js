@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import './styles/RekognitionConfig.css';
+import CustomNavbar from './components/Navbar';
 
 const CameraCapture = () => {
   const videoRef = useRef(null);
@@ -30,6 +32,10 @@ const CameraCapture = () => {
     return () => clearInterval(intervalId);
   };*/
 
+  
+
+
+  // getHomes ----->>>>> https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes
   const testFetch = async () => {
     await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
       method: 'POST',
@@ -43,6 +49,9 @@ const CameraCapture = () => {
         datoBiometrico: image,
         matriculaVehiculo: ' ',
         numIngresos: "4",
+
+
+        opcionSearch: 'AllHomes',
 
         DPI: '*'
       }),
@@ -87,19 +96,22 @@ const CameraCapture = () => {
   };
 
   return (
-    <div>
-      <video ref={videoRef} autoPlay />
-      {image && <img src={image} alt="captura" />}
-      <Button variant="primary" type="submit" onClick={testFetch}>
-        testFetch
-      </Button>
-      <Button variant="primary" type="submit" onClick={captureImage}>
-        captureImage
-      </Button>
-      <Button variant="primary" type="submit" onClick={startCamera}>
-        startCamera
-      </Button>
-    </div>
+    <>
+      <CustomNavbar></CustomNavbar>
+      <div className='Rekognition'>
+        <video ref={videoRef} autoPlay />
+        {image && <img src={image} alt="captura" />}
+        <Button className='buttonTestFetch' type="submit" onClick={testFetch}>
+          testFetch
+        </Button>
+        <Button className='buttonCaptureImage' type="submit" onClick={captureImage}>
+          captureImage
+        </Button>
+        <Button className='buttonStartCamera' type="submit" onClick={startCamera}>
+          startCamera
+        </Button>
+      </div>
+    </>
   );
 };
 
