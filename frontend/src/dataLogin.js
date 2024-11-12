@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = () => {
-    const storedUser = JSON.parse(localStorage.getItem('user')); // Obtiene y parsea el objeto guardado
+    const storedUser = JSON.parse(localStorage.getItem('user'));
     setUser({ user: storedUser.user, role: storedUser.role });
   };
 

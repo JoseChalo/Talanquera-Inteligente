@@ -13,7 +13,7 @@ function RegisterVisits() {
   const [datoBiometrico, setDatoBiometrico] = useState(null);
   const [numIngresos, setNumIngresos] = useState(1);
   const videoRef = useRef(null);
-  const dataUser = 
+  const { userDPI, } = JSON.parse(localStorage.getItem('user'));
 
   // Iniciar la cámara
   useEffect(() => {

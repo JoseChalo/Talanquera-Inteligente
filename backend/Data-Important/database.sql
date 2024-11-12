@@ -8,6 +8,7 @@ CREATE TABLE vivienda (
     idVivienda INT IDENTITY(1,1),
     numCasa INT NOT NULL,
     cluster VARCHAR(100) NOT NULL,
+    estado int CHECK (estado IN (0, 1)),    -- 1 enable y 0 disabled
     PRIMARY KEY (idVivienda)
 );
 
@@ -72,7 +73,6 @@ CREATE TABLE historial_Entradas (
 
 ---------------------------------------------------------------- Insertar valores iniciales -------------------------------------------------------------------------------------------------
 
--- Insertar datos en la tabla vivienda sin especificar el valor de la columna autoincrementable
 INSERT INTO vivienda (numCasa, cluster) VALUES
 (1, 'Alamos'),
 (2, 'Alamos'),
@@ -150,13 +150,13 @@ SELECT * FROM usuarios;
 SELECT * FROM historial_Entradas;
 
 SELECT * FROM usuarios U INNER JOIN (
-    SELECT R.dpi, R.nombre, R.numTelefono, 
+SELECT R.dpi, R.nombre, R.numTelefono, 
         R.datoBiometrico, R.estado, R.idVivienda, 
-        V.cluster, V.numCasa  
-    FROM residentes R 
-        INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
-        WHERE estado = 1) RV 
-ON RV.dpi = U.userDPI;
+        V.cluster, V.numCasa, V.estado AS estadoVivienda  
+FROM residentes R 
+INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
+WHERE R.estado = 1) 
+RV ON RV.dpi = U.userDPI;
 
 
 SELECT v.idVivienda, v.numCasa, v.cluster, r.dpi, r.nombre
