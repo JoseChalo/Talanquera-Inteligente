@@ -122,10 +122,18 @@ function RegisterResident() {
         });
 
         const data = await response.json();
-        if(data.error === "Ya existe un residente con ese DPI."){
-          alert("Ya existe un residente con ese DPI.");
-        }
         console.log('Respuesta del servidor:', data);
+        
+        if(data.message){
+          alert(data.message);
+        } 
+
+        if(!data.error) {
+          return true;
+        } else {
+          return false;
+        }
+
       } catch (error) {
         console.error('Error al enviar la imagen:', error);
       } finally {
@@ -143,8 +151,10 @@ function RegisterResident() {
       return;
     }
 
-    newResident().then(() => {
-      navigate('/Residents');
+    newResident().then((finalizar) => {
+      if(finalizar){
+        navigate('/Residents');
+      }
     });
   };
 

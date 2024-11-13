@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner} from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/RegisterVisits.css';
 import CustomNavbar from './Navbar';
@@ -17,6 +17,55 @@ function EditVisit() {
   const navigate = useNavigate();
   const location = useLocation();
   var visita = location.state?.visita;
+  const [clusters, setClusters] = useState([]);
+  const [houses, setHouses] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+    // Cargar clusters y casas desde Lambda
+    useEffect(() => {
+      const fetchHomes = async () => {
+        try {
+          const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              opcionSearch: 'AllHomes',
+            }),
+          });
+  
+          const data = await response.json();
+  
+          if (response.status === 200) {
+            const clustersData = [];
+            const housesData = [];
+  
+            // Llenar los clusters y las casas
+            data.data.forEach(item => {
+              if (item.cluster && !clustersData.includes(item.cluster)) {
+                clustersData.push(item.cluster); // Agregar clusters únicos
+              }
+              if (item.numCasa && !housesData.includes(item.numCasa)) {
+                housesData.push(item.numCasa); // Agregar casas únicas
+              }
+            });
+  
+            setClusters(clustersData);
+            setHouses(housesData);
+          } else {
+            console.error('Error al obtener los datos de casas:', data.message);
+          }
+        } catch (error) {
+          console.error('Error al realizar la solicitud a Lambda:', error);
+        }
+      };
+  
+      fetchHomes();
+    }, []);
+
+
 
   // Cargar datos de la visita al iniciar
   useEffect(() => {
@@ -64,6 +113,7 @@ function EditVisit() {
 
   const updateVisit = async () => {
     if (datoBiometrico) {
+      setLoading(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/editVisit', {
           method: 'POST',
@@ -89,6 +139,8 @@ function EditVisit() {
         navigate('/Visits');
       } catch (error) {
         console.error('Error al actualizar la visita:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       alert('Toma la foto antes de continuar con la actualización.');
@@ -148,23 +200,31 @@ function EditVisit() {
               <Form.Group controlId="formClusterDestino" className="formMargin">
                 <Form.Label>Cluster Destino</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresa el cluster destino"
+                  as="select"
                   value={clusterDestino}
                   onChange={(e) => setClusterDestino(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Selecciona un cluster</option>
+                  {clusters.map((clusterItem, index) => (
+                    <option key={index} value={clusterItem}>{clusterItem}</option>
+                  ))}
+                </Form.Control>
               </Form.Group>
 
               <Form.Group controlId="formNumViviendaDestino" className="formMargin">
                 <Form.Label>Número de Vivienda Destino</Form.Label>
                 <Form.Control
-                  type="number"
-                  placeholder="Ingresa el número de vivienda destino"
+                  as="select"
                   value={numViviendaDestino}
                   onChange={(e) => setNumViviendaDestino(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Selecciona un número de casa</option>
+                  {houses.map((house, index) => (
+                    <option key={index} value={house}>{house}</option>
+                  ))}
+                </Form.Control>
               </Form.Group>
 
               <Form.Group controlId="formMetodoIngreso" className="formMargin">
@@ -186,8 +246,8 @@ function EditVisit() {
                 />
               </Form.Group>
 
-              <Button className="custom-button" type="submit">
-                Actualizar
+              <Button className="custom-button" type="submit" disabled={loading}>
+                {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Actualizar')}
               </Button>
             </Form>
 

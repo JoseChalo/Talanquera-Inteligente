@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterVisits.css'; 
 import CustomNavbar from './Navbar';
 
@@ -15,6 +16,53 @@ function RegisterVisits() {
   const videoRef = useRef(null);
   const { userDPI, } = JSON.parse(localStorage.getItem('user'));
   const [loading, setLoading] = useState(false);
+  const [clusters, setClusters] = useState([]);
+  const [houses, setHouses] = useState([]);
+  const navigate = useNavigate();
+
+
+  // Cargar clusters y casas desde Lambda
+  useEffect(() => {
+    const fetchHomes = async () => {
+      try {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            opcionSearch: 'AllHomes',
+          }),
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+          const clustersData = [];
+          const housesData = [];
+
+          // Llenar los clusters y las casas
+          data.data.forEach(item => {
+            if (item.cluster && !clustersData.includes(item.cluster)) {
+              clustersData.push(item.cluster); // Agregar clusters únicos
+            }
+            if (item.numCasa && !housesData.includes(item.numCasa)) {
+              housesData.push(item.numCasa); // Agregar casas únicas
+            }
+          });
+
+          setClusters(clustersData);
+          setHouses(housesData);
+        } else {
+          console.error('Error al obtener los datos de casas:', data.message);
+        }
+      } catch (error) {
+        console.error('Error al realizar la solicitud a Lambda:', error);
+      }
+    };
+
+    fetchHomes();
+  }, []);
+
 
   // Iniciar la cámara
   useEffect(() => {
@@ -35,6 +83,8 @@ function RegisterVisits() {
     startCamera();
   }, []);
 
+
+
   // Captura la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
@@ -46,36 +96,55 @@ function RegisterVisits() {
     setDatoBiometrico(imageData);
   };
 
-  const handleSubmit = async (e) => {
+  // Función para registrar la visita
+  const newVisit = async () => {
+    if (datoBiometrico) {
+      setLoading(true);
+      try {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveVisit', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            dpiVisita,
+            nombreVisita,
+            dpiResidente,
+            clusterDestino,
+            numViviendaDestino,
+            metodoIngreso,
+            datoBiometrico: datoBiometrico,
+            numIngresos
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        if (data.error === "Visita ya registrada.") {
+          alert("La visita ya ha sido registrada.");
+        } else {
+          console.log('Respuesta del servidor:', data);
+        }
+      } catch (error) {
+        console.error('Error al registrar la visita:', error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert('Por favor captura la imagen antes de continuar.');
+    }
+  };
+
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!dpiVisita || !dpiResidente || !clusterDestino || !numViviendaDestino || !metodoIngreso || !numIngresos) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
 
-    try {
-      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveVisit', {
-        method: 'POST',
-        body: JSON.stringify({ 
-          dpiVisita,
-          nombreVisita,
-          dpiResidente,
-          clusterDestino,
-          numViviendaDestino,
-          metodoIngreso,
-          datoBiometrico: datoBiometrico,
-          numIngresos
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const data = await response.json();
-      console.log('Respuesta del servidor:', data);
-    } catch (error) {
-      console.error('Error en el registro:', error);
-    }
+    newVisit().then(() => {
+      navigate('/Visits');
+    });
   };
 
   
@@ -148,24 +217,31 @@ function RegisterVisits() {
               <Form.Group controlId="formClusterDestino" className="formMargin">
                 <Form.Label>Cluster Destino</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingresa el cluster destino"
+                  as="select"
                   value={clusterDestino}
                   onChange={(e) => setClusterDestino(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Selecciona un cluster</option>
+                  {clusters.map((cluster, index) => (
+                    <option key={index} value={cluster}>{cluster}</option>
+                  ))}
+                </Form.Control>
               </Form.Group>
-
 
               <Form.Group controlId="formNumViviendaDestino" className="formMargin">
                 <Form.Label>Número de Vivienda Destino</Form.Label>
                 <Form.Control
-                  type="number"
-                  placeholder="Ingresa el número de vivienda destino"
+                  as="select"
                   value={numViviendaDestino}
                   onChange={(e) => setNumViviendaDestino(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Selecciona un número de vivienda</option>
+                  {houses.map((house, index) => (
+                    <option key={index} value={house}>{house}</option>
+                  ))}
+                </Form.Control>
               </Form.Group>
 
 

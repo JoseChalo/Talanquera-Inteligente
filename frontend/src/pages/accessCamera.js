@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Button, Alert, Table, Card, Container } from 'react-bootstrap';
 import '../styles/Home.css';
-import CustomNavbar from '../components/Navbar'
+import CustomNavbar from '../components/Navbar';
 
 function Home() {
   const videoRef = useRef(null);
@@ -20,6 +20,24 @@ function Home() {
     const dataURL = canvas.toDataURL('image/jpeg');
     setImage(dataURL);
   };
+
+  const fetchRecognitionHistory = async () => {
+    try {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getRecord', {
+        method: 'POST',
+        body: JSON.stringify({ dateSearch: '*' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      if (!response.ok) throw new Error('Error al obtener el historial');
+  
+      const data = await response.json();
+      setRecognitionHistory(data.data);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
 
   const searchResident = async () => {
     if (!image) {
@@ -40,8 +58,6 @@ function Home() {
 
       const data = await response.json();
       setServerResponse(data);
-
-      console.log(data);
 
       if (data.dataResident) {
         const recognizedResident = data.dataResident[0];
@@ -76,11 +92,14 @@ function Home() {
       }
     };
     startCamera();
+    
+    // Llamar a la función que obtiene el historial cuando se carga el componente
+    fetchRecognitionHistory();
   }, []);
 
   return (
     <>
-      <CustomNavbar></CustomNavbar>
+      <CustomNavbar />
       <div className="home-container">
         
         <Container className="card-container">
@@ -123,8 +142,6 @@ function Home() {
                 Tomar Foto
               </Button>
 
-
-
               {image && (
                 <div className="captured-image-container">
                   <img src={image} alt="Captura" className="captured-image" />
@@ -133,9 +150,6 @@ function Home() {
                   </Button>
                 </div>
               )}
-
-
-
             </div>
           </Card>
         </Container>

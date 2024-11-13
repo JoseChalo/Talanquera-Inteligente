@@ -244,6 +244,7 @@ function EditResident() {
               <Button className="custom-button" type="submit" disabled={loading}>
                 {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Actualizar')}
               </Button>
+              
             </Form>
 
             <div className="camera-column">

@@ -187,6 +187,16 @@ FROM residentes R
 INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
 WHERE estado = 1;
 
+
+SELECT V.idVivienda, V.numCasa, V.cluster, R.dpi, R.estado AS estadoResidente 
+FROM vivienda V INNER JOIN residentes R 
+ON V.idVivienda = R.idVivienda WHERE R.estado = 1;
+
+
+SELECT V.idVivienda, V.numCasa, V.cluster, VS.dpiVisita, VS.estado AS estadoVisita 
+FROM vivienda V INNER JOIN visitas VS
+ON V.idVivienda = VS.idViviendaDestino WHERE VS.estado = 1;
+
 ----------------------------------------------------- Consulta para generar UML de entidad relacion en https://app.chartdb.io ---------------------------------------------------------------------------
 WITH fk_info AS (
     SELECT

@@ -1,123 +1,100 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 import './styles/RekognitionConfig.css';
 import CustomNavbar from './components/Navbar';
 
-const CameraCapture = () => {
-  const videoRef = useRef(null);
-  const [image, setImage] = useState(null);
+const EditRekognition = () => {
+  const [faceList, setFaceList] = useState([]); // Estado para almacenar el listado de rostros
 
-  const startCamera = async () => {
+  const showListFaces = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-
-      // Limpiar el stream al desmontar
-      return () => {
-        stream.getTracks().forEach(track => track.stop());
-      };
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
+        method: 'POST',
+        body: JSON.stringify({ numFunction: 1 }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      setFaceList(data.faceList || []); // Guardar el listado en el estado
+      console.log('Respuesta del servidor:', data);
     } catch (error) {
-      console.error("Error al acceder a la cámara:", error);
+      console.error('Error con la petición:', error);
     }
   };
 
-  /*const startCamera = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    videoRef.current.srcObject = stream;
-
-    // Iniciar la captura automática de imágenes
-    const intervalId = setInterval(captureImage, 5000); // Captura cada 5 segundos
-
-    // Limpiar el intervalo cuando el componente se desmonte
-    return () => clearInterval(intervalId);
-  };*/
-
-  
-
-
-  // getHomes ----->>>>> https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes
-  const testFetch = async () => {
-    await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        dpiVisita: "2675 88259 0101",
-        nombreVisita: "Alejandra Nazareth",
-        dpiResidente: "3826 20704 0101",
-        clusterDestino: "Alamos",
-        numViviendaDestino: "1",
-        metodoIngreso: "Peatonal",
-        datoBiometrico: image,
-        matriculaVehiculo: ' ',
-        numIngresos: "4",
-
-
-        opcionSearch: 'AllHomes',
-
-        DPI: '*'
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Respuesta del servidor:', data);
-      })
-      .catch((error) => {
-        console.error('Error con la peticion:', error);
+  const deleteRekognition = async () => {
+    try {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
+        method: 'POST',
+        body: JSON.stringify({ numFunction: 2 }),
+        headers: { 'Content-Type': 'application/json' },
       });
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+      alert('Reconocimientos Eliminados.');
+    } catch (error) {
+      console.error('Error con la petición:', error);
+    }
   };
 
-  const captureImage = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    const imageData = canvas.toDataURL('image/jpeg');
-
-    // Enviar la imagen al servidor EC2
-    /*fetch('https://z6p60yenfa.execute-api.us-east-2.amazonaws.com/getAllResidents/getAllResidents', {
-      method: 'POST',
-      body: JSON.stringify({ image: imageData }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Respuesta del servidor:', data);
-      })
-      .catch((error) => {
-        console.error('Error al enviar la imagen:', error);
-      });*/
-
-    setImage(imageData);
+  const createRekognition = async () => {
+    try {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/functions', {
+        method: 'POST',
+        body: JSON.stringify({ numFunction: 3 }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+      alert('Reconocimientos creados.');
+    } catch (error) {
+      console.error('Error con la petición:', error);
+    }
   };
 
   return (
     <>
-      <CustomNavbar></CustomNavbar>
-      <div className='Rekognition'>
-        <video ref={videoRef} autoPlay />
-        {image && <img src={image} alt="captura" />}
-        <Button className='buttonTestFetch' type="submit" onClick={testFetch}>
-          testFetch
+      <CustomNavbar />
+      <div className="Rekognition">
+        <Button className="buttonTestFetch" onClick={showListFaces}>
+          Ver listado de reconocimiento de Rekognition
         </Button>
-        <Button className='buttonCaptureImage' type="submit" onClick={captureImage}>
-          captureImage
+        <Button className="buttonTestFetch" onClick={deleteRekognition}>
+          Eliminar reconocimiento de Rekognition
         </Button>
-        <Button className='buttonStartCamera' type="submit" onClick={startCamera}>
-          startCamera
+        <Button className="buttonTestFetch" onClick={createRekognition}>
+          Crear reconocimiento de Rekognition
         </Button>
+
+        {faceList.length > 0 && (
+          <div className="faceListTable">
+            <h2>Listado de Rostros en Rekognition</h2>
+            <Table striped bordered hover variant="dark">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>DPI</th>
+                  <th>Face ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {faceList.map((face, index) => {
+                  const [name, dpi] = face.ExternalImageId.split('_').map((part) => part.split(':')[1]);
+                  return (
+                    <tr key={index}>
+                      <td>{name}</td>
+                      <td>{dpi}</td>
+                      <td>{face.FaceId}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
-export default CameraCapture;
-
-
-// GetAllCars: https://8whj3n8d29.execute-api.us-east-2.amazonaws.com/get/getCars
-// UpdateResidents: https://4wufzl5q64.execute-api.us-east-2.amazonaws.com/update/updateResident
-// Delete Resident: https://xshjpzgyh0.execute-api.us-east-2.amazonaws.com/delete/deleteResident
+export default EditRekognition;
