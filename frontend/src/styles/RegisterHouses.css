@@ -33,7 +33,8 @@
     border: none !important;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 170px !important;
+    justify-content: center !important;
+    align-items: center;
   }
   
   .custom-button:hover {

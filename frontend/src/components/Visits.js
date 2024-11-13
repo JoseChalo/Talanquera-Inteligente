@@ -35,8 +35,14 @@ function Visits() {
   
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    fetchVisits(storedUser);
-  }, []);
+    
+    if (storedUser) {
+      fetchVisits(storedUser);
+    } else {
+      console.error('No user found in local storage.');
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleRegisterVisit = () => {
     navigate('/RegisterVisits');
@@ -62,7 +68,7 @@ function Visits() {
         });
 
         if (response.ok) {
-          await fetchVisits();
+          setVisits((prevVisits) => prevVisits.filter((visit) => visit.dpiVisita !== visitToDelete.dpiVisita));
           setShowModal(false);
         } else {
           console.error('Error al eliminar visita:', response.statusText);

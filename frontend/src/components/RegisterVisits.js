@@ -147,7 +147,7 @@ function RegisterVisits() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!dpiVisita || !dpiResidente || !clusterDestino || !numViviendaDestino || !metodoIngreso || !numIngresos) {
+    if (!dpiVisita || !dpiResidente || !nombreVisita || !clusterDestino || !numViviendaDestino || !metodoIngreso || !numIngresos) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }

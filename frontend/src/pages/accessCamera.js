@@ -166,7 +166,7 @@ function Home() {
             {serverResponse.dpiEntrada.length > 0 ? (
               <div>
                 <p><strong>Nombre:</strong> {nombreEntrada}</p>
-                <p><strong>DPI:</strong> {dpiEntrada}%</p>
+                <p><strong>DPI:</strong> {dpiEntrada}</p>
               </div>
             ) : (
               <p>No se encontraron coincidencias.</p>

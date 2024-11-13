@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterHouses.css';
 import CustomNavbar from './Navbar';
@@ -8,8 +8,10 @@ function RegisterHouses() {
   const [numeroCasa, setNumeroCasa] = useState('');
   const [cluster, setCluster] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const newHouse = async () => {
+    setLoading(true);
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveHome', {
         method: 'POST',
@@ -32,6 +34,8 @@ function RegisterHouses() {
       }
     } catch (error) {
       console.error('Error al enviar los datos:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,8 +77,8 @@ function RegisterHouses() {
               />
             </Form.Group>
 
-            <Button className="custom-button" type="submit">
-              Registrar
+            <Button className="custom-button" type="submit" disabled={loading}>
+              {loading ? (<> <Spinner animation="border" size="sm" /> Cargando...</>) : ('Registrar')}
             </Button>
           </Form>
         </Container>

@@ -11,7 +11,6 @@ function Residents() {
   const [residentToDelete, setResidentToDelete] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Función para obtener residentes
   const fetchResidents = async () => {
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getResidents', {
@@ -26,7 +25,6 @@ function Residents() {
     }
   };
 
-  // Obtener residentes al cargar el componente
   useEffect(() => {
     fetchResidents();
   }, []);
