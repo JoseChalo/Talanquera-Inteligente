@@ -8,7 +8,7 @@ function EditCars() {
   const [dpi, setDpi] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('No Foto');
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ function EditCars() {
       setDpi(car.idResidente || '');
       setModel(car.modelo || '');
       setColor(car.color);
-      setImage(car.credencialesVehiculo);
+      setImage('No Foto');
     }
   }, [car]);
 
@@ -167,7 +167,7 @@ function EditCars() {
               <Button variant="success" onClick={captureImage} className="capture-button">
                 Tomar Foto
               </Button>
-              {image && <img src={image} alt="Captura" className="captured-image" />}
+              {<img src={image !== 'No Foto'? image : `${car.credencialesVehiculo}?v=${Date.now()}`} alt="Captura" className="captured-image" />}
             </div>
           </div>
         </Container>

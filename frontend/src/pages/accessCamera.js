@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Button, Alert, Table, Card, Container } from 'react-bootstrap';
 import '../styles/Home.css';
 import CustomNavbar from '../components/Navbar';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
 
 function Home() {
   const videoRef = useRef(null);
@@ -9,6 +11,7 @@ function Home() {
   const [serverResponse, setServerResponse] = useState(null);
   const [error, setError] = useState(null);
   const [recognitionHistory, setRecognitionHistory] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('*');
 
   const captureImage = () => {
     const canvas = document.createElement('canvas');
@@ -25,7 +28,7 @@ function Home() {
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getRecord', {
         method: 'POST',
-        body: JSON.stringify({ dateSearch: '*' }),
+        body: JSON.stringify({ dateSearch: selectedDate }),
         headers: { 'Content-Type': 'application/json' },
       });
   
@@ -36,6 +39,10 @@ function Home() {
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const handleDateChange = (event) => {
+    setSelectedDate(new Date(event.target.value).toISOString().split('T')[0]); // Captura la fecha en formato "YYYY-MM-DD"
   };
   
 
@@ -58,25 +65,8 @@ function Home() {
 
       const data = await response.json();
       setServerResponse(data);
+      fetchRecognitionHistory();
 
-      if (data.dataResident) {
-        const recognizedResident = data.dataResident[0];
-
-        // Parsear el nombre
-        const nameRaw = recognizedResident.Face.ExternalImageId;
-        const cleanedText = nameRaw.replace('Nombre:', '').replace('DPI:', '');
-        const [name, dpi] = cleanedText.split('_');
-        const formattedName = name.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-        const formattedDpi = dpi.replace(/-/g, ' ');
-
-        const residentData = {
-          name: formattedName,
-          dpi: formattedDpi,
-          confidence: recognizedResident.Face.Confidence.toFixed(2),
-          similarity: recognizedResident.Similarity.toFixed(2),
-        };
-        setRecognitionHistory((prevHistory) => [...prevHistory, residentData]);
-      }
     } catch (error) {
       setError(error.message);
     }
@@ -106,30 +96,43 @@ function Home() {
           
           <Card className="card">
             <h2>Historial de Reconocimientos</h2>
+            <InputGroup className="mb-3">
+              <Form.Control type="date" aria-label="Buscar por fecha" onChange={handleDateChange} />
+              <Button variant="primary" id="button-addon1" onClick={fetchRecognitionHistory}>
+                Buscar
+              </Button>
+            </InputGroup>
             <div className="card-content table-container">
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
                     <th>Nombre</th>
                     <th>DPI</th>
-                    <th>Confianza</th>
-                    <th>Similitud</th>
+                    <th>fecha</th>
+                    <th>hora</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => (
-                    <tr key={index}>
-                      <td>{record.name}</td>
-                      <td>{record.dpi}</td>
-                      <td>{record.confidence}%</td>
-                      <td>{record.similarity}%</td>
-                    </tr>
-                  )) : (
-                    <tr>
-                      <td colSpan="4">No hay registros.</td>
-                    </tr>
-                  )}
-                </tbody>
+                  <tbody>
+                    {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => {
+                      const fechaObj = new Date(record.fecha);
+                      const horaObj = new Date(record.hora);
+                      const fechaFormateada = !isNaN(fechaObj) ? fechaObj.toISOString().split('T')[0] : 'Fecha inválida';
+                      const horaFormateada = !isNaN(horaObj) ? horaObj.toISOString().split('T')[1].split('.')[0] : 'Hora inválida';
+
+                      return (
+                        <tr key={index}>
+                          <td>{record.nombre}</td>
+                          <td>{record.dpi}</td>
+                          <td>{fechaFormateada}</td>
+                          <td>{horaFormateada}</td>
+                        </tr>
+                      );
+                    }) : (
+                      <tr>
+                        <td colSpan="4">No hay registros.</td>
+                      </tr>
+                    )}
+                  </tbody>
               </Table>
             </div>
           </Card>

@@ -8,7 +8,7 @@ function EditResident() {
   const [name, setName] = useState('');
   const [dpi, setDpi] = useState('');
   const [phone, setPhone] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('No Foto');
   const [numHome, setNumHome] = useState('');
   const [cluster, setCluster] = useState('');
   const [password, setPassword] = useState('');
@@ -72,7 +72,7 @@ function EditResident() {
       setNumHome(resident.numCasa || '');
       setCluster(resident.cluster || '');
       setPassword(resident.contra || '');
-      setImage(resident.datoBiometrico || null);
+      setImage('No Foto');
     }
   }, [resident]);
 
@@ -253,7 +253,7 @@ function EditResident() {
               <Button variant="success" onClick={captureImage} className="capture-button">
                 Tomar Foto
               </Button>
-              {image && <img src={image} alt="Captura" className="captured-image" />}
+              {<img src={image !== 'No Foto'? image : `${resident.datoBiometrico}?v=${Date.now()}`} alt="Captura" className="captured-image" />}
             </div>
           </div>
         </Container>

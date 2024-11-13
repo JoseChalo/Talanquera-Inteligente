@@ -2,6 +2,7 @@ CREATE DATABASE Talanquera_Inteligente;
 USE Talanquera_Inteligente;
 
 USE rdsadmin;
+-- ALTER DATABASE Talanquera_Inteligente SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 -- DROP DATABASE Talanquera_Inteligente;
 
 CREATE TABLE vivienda (
