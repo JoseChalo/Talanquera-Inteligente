@@ -1,0 +1,19 @@
+{
+  "name": "funciones-de-lambda",
+  "version": "1.0.0",
+  "main": "faceSave.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.46",
+    "mssql": "^11.0.1",
+    "mysql": "^2.18.1"
+  },
+  "description": ""
+}
