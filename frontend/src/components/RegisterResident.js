@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterResident.css'; 
 import CustomNavbar from './Navbar';
 
-
 function RegisterResident() {
   const [name, setName] = useState('');
   const [dpi, setDpi] = useState('');
@@ -19,8 +18,6 @@ function RegisterResident() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-
-  // Cargar clusters y casas desde Lambda
   useEffect(() => {
     const fetchHomes = async () => {
       try {
@@ -40,13 +37,12 @@ function RegisterResident() {
           const clustersData = [];
           const housesData = [];
           
-          // Llenar los clusters y las casas
           data.data.forEach(item => {
             if (item.cluster && !clustersData.includes(item.cluster)) {
-              clustersData.push(item.cluster); // Agregar clusters únicos
+              clustersData.push(item.cluster);
             }
             if (item.numCasa && !housesData.includes(item.numCasa)) {
-              housesData.push(item.numCasa); // Agregar casas únicas
+              housesData.push(item.numCasa);
             }
           });
 
@@ -63,15 +59,12 @@ function RegisterResident() {
     fetchHomes();
   }, []);
 
-
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
   
-        // Limpiar el stream al desmontar
         return () => {
           stream.getTracks().forEach(track => track.stop());
         };
@@ -83,7 +76,6 @@ function RegisterResident() {
     startCamera();
   }, []);
 
-  // Capturar la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;

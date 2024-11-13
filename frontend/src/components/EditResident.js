@@ -20,7 +20,6 @@ function EditResident() {
   const resident = location.state?.resident;
   const [loading, setLoading] = useState(false);
 
-  // Cargar clusters y casas desde Lambda
   useEffect(() => {
     const fetchHomes = async () => {
       try {
@@ -40,13 +39,12 @@ function EditResident() {
           const clustersData = [];
           const housesData = [];
           
-          // Llenar los clusters y las casas
           data.data.forEach(item => {
             if (item.cluster && !clustersData.includes(item.cluster)) {
-              clustersData.push(item.cluster); // Agregar clusters únicos
+              clustersData.push(item.cluster);
             }
             if (item.numCasa && !housesData.includes(item.numCasa)) {
-              housesData.push(item.numCasa); // Agregar casas únicas
+              housesData.push(item.numCasa);
             }
           });
 
@@ -63,7 +61,6 @@ function EditResident() {
     fetchHomes();
   }, []);
 
-  // Obtener los datos del residente actual al cargar la página
   useEffect(() => {
     if (resident) {
       setName(resident.nombre || '');
@@ -76,7 +73,6 @@ function EditResident() {
     }
   }, [resident]);
 
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -92,7 +88,6 @@ function EditResident() {
     startCamera();
   }, []);
 
-  // Capturar la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -129,10 +124,13 @@ function EditResident() {
         });
 
         const data = await response.json();
-        if (data.message === "Datos actualizados exitosamente.") {
-          alert("Residente actualizado con éxito.");
-          navigate('/Residents');
-        }
+
+        if(data.message){
+          alert(data.message);
+          if(!data.error){
+            navigate('/Residents');
+          }
+        } 
       } catch (error) {
         console.error('Error al actualizar los datos del residente:', error);
       } finally {

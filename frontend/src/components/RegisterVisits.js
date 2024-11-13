@@ -13,47 +13,63 @@ function RegisterVisits() {
   const [metodoIngreso, setMetodoIngreso] = useState('Peatonal');
   const [datoBiometrico, setDatoBiometrico] = useState(null);
   const [numIngresos, setNumIngresos] = useState(1);
+  const [role, setRole] = useState(false);
   const videoRef = useRef(null);
-  const { userDPI, } = JSON.parse(localStorage.getItem('user'));
+  const streamRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [clusters, setClusters] = useState([]);
   const [houses, setHouses] = useState([]);
   const navigate = useNavigate();
 
-
-  // Cargar clusters y casas desde Lambda
   useEffect(() => {
     const fetchHomes = async () => {
       try {
-        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            opcionSearch: 'AllHomes',
-          }),
-        });
+        const storedUser = JSON.parse(localStorage.getItem('user'));
 
-        const data = await response.json();
-        if (response.status === 200) {
-          const clustersData = [];
-          const housesData = [];
+        if (storedUser && storedUser.role) {
+          let dpiValue;
+          if (storedUser.role === 'admin') {
+            dpiValue = null;
+            setRole(true);
+          } else {
+            dpiValue = storedUser.user;
+            setDpiResidente(dpiValue);
+            setRole(false);
+          }
 
-          // Llenar los clusters y las casas
-          data.data.forEach(item => {
-            if (item.cluster && !clustersData.includes(item.cluster)) {
-              clustersData.push(item.cluster); // Agregar clusters únicos
-            }
-            if (item.numCasa && !housesData.includes(item.numCasa)) {
-              housesData.push(item.numCasa); // Agregar casas únicas
-            }
+          const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              opcionSearch: 'AllHomes',
+              dpiSeacrh: dpiValue
+            }),
           });
 
-          setClusters(clustersData);
-          setHouses(housesData);
+          const data = await response.json();
+          if (response.status === 200) {
+            const clustersData = [];
+            const housesData = [];
+
+            data.data.forEach(item => {
+              if (item.cluster && !clustersData.includes(item.cluster)) {
+                clustersData.push(item.cluster);
+              }
+              if (item.numCasa && !housesData.includes(item.numCasa)) {
+                housesData.push(item.numCasa);
+              }
+            });
+
+            setClusters(clustersData);
+            setHouses(housesData);
+          } else {
+            console.error('Error al obtener los datos de casas:', data.message);
+          }
         } else {
-          console.error('Error al obtener los datos de casas:', data.message);
+          console.error("No se encontró un usuario en localStorage o el objeto es inválido.");
+          navigate('/login');
         }
       } catch (error) {
         console.error('Error al realizar la solicitud a Lambda:', error);
@@ -61,17 +77,15 @@ function RegisterVisits() {
     };
 
     fetchHomes();
-  }, []);
+  }, [navigate]);
 
-
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
+        streamRef.current = stream;
   
-        // Limpiar el stream al desmontar
         return () => {
           stream.getTracks().forEach(track => track.stop());
         };
@@ -83,9 +97,6 @@ function RegisterVisits() {
     startCamera();
   }, []);
 
-
-
-  // Captura la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -96,7 +107,6 @@ function RegisterVisits() {
     setDatoBiometrico(imageData);
   };
 
-  // Función para registrar la visita
   const newVisit = async () => {
     if (datoBiometrico) {
       setLoading(true);
@@ -105,7 +115,7 @@ function RegisterVisits() {
           method: 'POST',
           body: JSON.stringify({ 
             dpiVisita,
-            nombreVisita,
+            nombreVisita: nombreVisita,
             dpiResidente,
             clusterDestino,
             numViviendaDestino,
@@ -119,10 +129,11 @@ function RegisterVisits() {
         });
 
         const data = await response.json();
-        if (data.error === "Visita ya registrada.") {
-          alert("La visita ya ha sido registrada.");
+        alert(data.message);
+        if(!data.error) {
+          return true;
         } else {
-          console.log('Respuesta del servidor:', data);
+          return false;
         }
       } catch (error) {
         console.error('Error al registrar la visita:', error);
@@ -134,7 +145,6 @@ function RegisterVisits() {
     }
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!dpiVisita || !dpiResidente || !clusterDestino || !numViviendaDestino || !metodoIngreso || !numIngresos) {
@@ -142,12 +152,16 @@ function RegisterVisits() {
       return;
     }
 
-    newVisit().then(() => {
-      navigate('/Visits');
+    newVisit().then((finalizado) => {
+      if(finalizado){
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+        navigate('/Visits');
+      }
     });
   };
 
-  
   return (
     <>
       <CustomNavbar></CustomNavbar>
@@ -210,6 +224,7 @@ function RegisterVisits() {
                   }}
                   maxLength={15}
                   required
+                  readOnly={!role}
                 />
               </Form.Group>
 
@@ -262,7 +277,6 @@ function RegisterVisits() {
                   value={numIngresos}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);
-                    // Par a impar
                     if (!isNaN(value)) {
                       setNumIngresos(value % 2 === 0 ? value : value + 1);
                     }

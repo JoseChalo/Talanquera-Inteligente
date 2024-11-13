@@ -5,7 +5,7 @@ import './styles/RekognitionConfig.css';
 import CustomNavbar from './components/Navbar';
 
 const EditRekognition = () => {
-  const [faceList, setFaceList] = useState([]); // Estado para almacenar el listado de rostros
+  const [faceList, setFaceList] = useState([]);
 
   const showListFaces = async () => {
     try {
@@ -15,7 +15,7 @@ const EditRekognition = () => {
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
-      setFaceList(data.faceList || []); // Guardar el listado en el estado
+      setFaceList(data.faceList || []);
       console.log('Respuesta del servidor:', data);
     } catch (error) {
       console.error('Error con la petición:', error);

@@ -36,7 +36,7 @@ CREATE TABLE visitas (
     estado Int CHECK (estado IN (0, 1)),    -- 1 enable y 0 disabled
     PRIMARY KEY (dpiVisita),
     FOREIGN KEY (idViviendaDestino) REFERENCES vivienda(idVivienda),
-    FOREIGN KEY (dpiResidente) REFERENCES residentes(dpi),
+    FOREIGN KEY (dpiResidente) REFERENCES residentes(dpi)
 );
 
 CREATE TABLE automovil (
@@ -74,54 +74,55 @@ CREATE TABLE historial_Entradas (
 
 ---------------------------------------------------------------- Insertar valores iniciales -------------------------------------------------------------------------------------------------
 
-INSERT INTO vivienda (numCasa, cluster) VALUES
-(1, 'Alamos'),
-(2, 'Alamos'),
-(3, 'Alamos'),
-(4, 'Alamos'),
-(5, 'Alamos'),
-(6, 'Alamos'),
-(7, 'Alamos'),
-(8, 'Alamos'),
-(9, 'Alamos'),
-(10, 'Alamos'),
-(11, 'Alamos'),
-(12, 'Alamos'),
-(13, 'Alamos'),
-(14, 'Alamos'),
-(15, 'Alamos'),
+INSERT INTO vivienda (numCasa, cluster, estado) VALUES
+(1, 'Alamos', 1),
+(2, 'Alamos', 1),
+(3, 'Alamos', 1),
+(4, 'Alamos', 1),
+(5, 'Alamos', 1),
+(6, 'Alamos', 1),
+(7, 'Alamos', 1),
+(8, 'Alamos', 1),
+(9, 'Alamos', 1),
+(10, 'Alamos', 1),
+(11, 'Alamos', 1),
+(12, 'Alamos', 1),
+(13, 'Alamos', 1),
+(14, 'Alamos', 1),
+(15, 'Alamos', 1),
 
-(1, 'Robles'),
-(2, 'Robles'),
-(3, 'Robles'),
-(4, 'Robles'),
-(5, 'Robles'),
-(6, 'Robles'),
-(7, 'Robles'),
-(8, 'Robles'),
-(9, 'Robles'),
-(10, 'Robles'),
-(11, 'Robles'),
-(12, 'Robles'),
-(13, 'Robles'),
-(14, 'Robles'),
-(15, 'Robles'),
+(1, 'Robles', 1),
+(2, 'Robles', 1),
+(3, 'Robles', 1),
+(4, 'Robles', 1),
+(5, 'Robles', 1),
+(6, 'Robles', 1),
+(7, 'Robles', 1),
+(8, 'Robles', 1),
+(9, 'Robles', 1),
+(10, 'Robles', 1),
+(11, 'Robles', 1),
+(12, 'Robles', 1),
+(13, 'Robles', 1),
+(14, 'Robles', 1),
+(15, 'Robles', 1),
 
-(1, 'Cedros'),
-(2, 'Cedros'),
-(3, 'Cedros'),
-(4, 'Cedros'),
-(5, 'Cedros'),
-(6, 'Cedros'),
-(7, 'Cedros'),
-(8, 'Cedros'),
-(9, 'Cedros'),
-(10, 'Cedros'),
-(11, 'Cedros'),
-(12, 'Cedros'),
-(13, 'Cedros'),
-(14, 'Cedros'),
-(15, 'Cedros');
+(1, 'Cedros', 1),
+(2, 'Cedros', 1),
+(3, 'Cedros', 1),
+(4, 'Cedros', 1),
+(5, 'Cedros', 1),
+(6, 'Cedros', 1),
+(7, 'Cedros', 1),
+(8, 'Cedros', 1),
+(9, 'Cedros', 1),
+(10, 'Cedros', 1),
+(11, 'Cedros', 1),
+(12, 'Cedros', 1),
+(13, 'Cedros', 1),
+(14, 'Cedros', 1),
+(15, 'Cedros', 1);
+
 
 INSERT INTO usuarios (userDPI, contra, rol) VALUES 
 ('admin', 'admin337626', 'admin'),
@@ -187,6 +188,17 @@ SELECT R.dpi, R.nombre, R.numTelefono, R.datoBiometrico, R.estado, R.idVivienda,
 FROM residentes R 
 INNER JOIN vivienda V ON R.idVivienda = V.idVivienda 
 WHERE estado = 1;
+
+SELECT v.idVivienda, v.numCasa, v.cluster, r.dpi, r.nombre
+FROM vivienda v
+LEFT JOIN residentes r 
+ON v.idVivienda = r.idVivienda AND r.estado = 1
+WHERE v.estado = 1
+
+SELECT v.idVivienda, v.numCasa, v.cluster
+FROM vivienda v
+LEFT JOIN residentes r ON v.idVivienda = r.idVivienda
+WHERE r.dpi IS NULL AND v.estado = 1;
 
 
 SELECT V.idVivienda, V.numCasa, V.cluster, R.dpi, R.estado AS estadoResidente 

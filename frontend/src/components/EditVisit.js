@@ -22,52 +22,47 @@ function EditVisit() {
   const [loading, setLoading] = useState(false);
 
 
-    // Cargar clusters y casas desde Lambda
-    useEffect(() => {
-      const fetchHomes = async () => {
-        try {
-          const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              opcionSearch: 'AllHomes',
-            }),
+  useEffect(() => {
+    const fetchHomes = async () => {
+      try {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            opcionSearch: 'AllHomes',
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          const clustersData = [];
+          const housesData = [];
+
+          data.data.forEach(item => {
+            if (item.cluster && !clustersData.includes(item.cluster)) {
+              clustersData.push(item.cluster);
+            }
+            if (item.numCasa && !housesData.includes(item.numCasa)) {
+              housesData.push(item.numCasa);
+            }
           });
-  
-          const data = await response.json();
-  
-          if (response.status === 200) {
-            const clustersData = [];
-            const housesData = [];
-  
-            // Llenar los clusters y las casas
-            data.data.forEach(item => {
-              if (item.cluster && !clustersData.includes(item.cluster)) {
-                clustersData.push(item.cluster); // Agregar clusters únicos
-              }
-              if (item.numCasa && !housesData.includes(item.numCasa)) {
-                housesData.push(item.numCasa); // Agregar casas únicas
-              }
-            });
-  
-            setClusters(clustersData);
-            setHouses(housesData);
-          } else {
-            console.error('Error al obtener los datos de casas:', data.message);
-          }
-        } catch (error) {
-          console.error('Error al realizar la solicitud a Lambda:', error);
+
+          setClusters(clustersData);
+          setHouses(housesData);
+        } else {
+          console.error('Error al obtener los datos de casas:', data.message);
         }
-      };
-  
-      fetchHomes();
-    }, []);
+      } catch (error) {
+        console.error('Error al realizar la solicitud a Lambda:', error);
+      }
+    };
 
+    fetchHomes();
+  }, []);
 
-
-  // Cargar datos de la visita al iniciar
   useEffect(() => {
     if (visita) {
       setDpiVisita(visita.dpiVisita || '');
@@ -81,14 +76,12 @@ function EditVisit() {
     }
   }, [visita]);
 
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
   
-        // Limpiar el stream al desmontar
         return () => {
           stream.getTracks().forEach(track => track.stop());
         };
@@ -100,7 +93,6 @@ function EditVisit() {
     startCamera();
   }, []);
 
-  // Capturar la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -134,9 +126,11 @@ function EditVisit() {
             'Content-Type': 'application/json'
           }
         });
-
-        alert((await response.json()).message);
-        navigate('/Visits');
+        const data = await response.json();
+        alert(data.message);
+        if (!data.error) {
+          navigate('/Visits');
+        }
       } catch (error) {
         console.error('Error al actualizar la visita:', error);
       } finally {
@@ -263,7 +257,6 @@ function EditVisit() {
         </Container>
       </div>   
     </>
-
   );
 }
 

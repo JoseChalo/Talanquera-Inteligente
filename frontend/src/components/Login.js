@@ -34,7 +34,10 @@ const LoginPage = () => {
       });
       const data = await response.json();
       if (data && data.userDPI) {
-        const user = { user: data.userDPI, role: data.rol };
+        const user = { 
+          user: data.userDPI, 
+          role: data.rol 
+        };
         localStorage.setItem('user', JSON.stringify(user));
         login(data.userDPI, data.rol);
         user.role === 'admin' || user.role === 'garita' ? navigate('/camara') : navigate('/visits');

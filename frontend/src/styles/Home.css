@@ -47,7 +47,6 @@
   margin-bottom: 1rem;
 }
 
-/* Contenedor para la foto capturada */
 .captured-image-container {
   display: flex;
   flex-direction: column;
@@ -101,4 +100,14 @@
 
 .table-container::-webkit-scrollbar {
   display: none;
+}
+
+.search {
+  background-color: #F6AC27 !important;
+  border: #F6AC27 !important;
+}
+
+.search:hover {
+  background-color: #000 !important;
+  border: #F6AC27 !important;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Modal, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Houses.css';
 import CustomNavbar from './Navbar';
@@ -9,8 +9,8 @@ function Houses() {
   const [houses, setHouses] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [houseToDelete, setHouseToDelete] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Función para obtener casas cambiar url
   const fetchHouses = async () => {
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getHomes', {
@@ -33,7 +33,6 @@ function Houses() {
     }
   };
 
-  // Obtener casas al cargar el componente
   useEffect(() => {
     fetchHouses();
   }, []);
@@ -51,18 +50,23 @@ function Houses() {
     setShowModal(true);
   };
 
+
   const confirmDelete = async () => {
     if (houseToDelete) {
+      setLoadingDelete(true);
       try {
-        const response = await fetch('https://api-url/deleteHouse', {
+        const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteHome', {
           method: 'POST',
           body: JSON.stringify({ 
-            numeroCasa: houseToDelete.numeroCasa,
-            DPI: houseToDelete.idPropietario
+            currentCluster: houseToDelete.cluster,
+            currentNumHome: houseToDelete.numCasa,
           }),
           headers: { 'Content-Type': 'application/json' },
         });
 
+        const data = await response.json();
+        console.log(data);
+  
         if (response.ok) {
           await fetchHouses();
           setShowModal(false);
@@ -73,6 +77,8 @@ function Houses() {
       } catch (error) {
         console.error('Error al eliminar casa:', error);
         alert('Error al eliminar casa: ' + error.message);
+      } finally {
+        setLoadingDelete(false);
       }
     }
   };
@@ -114,18 +120,17 @@ function Houses() {
             </tbody>
           </Table>
 
-          {/* Modal de confirmación de eliminación */}
           <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
             <Modal.Header closeButton>
               <Modal.Title>Confirmación de Eliminación</Modal.Title>
             </Modal.Header>
-            <Modal.Body>¿Estás seguro de que deseas eliminar la casa número {houseToDelete?.numeroCasa}?</Modal.Body>
+            <Modal.Body>¿Estás seguro de que deseas eliminar la casa número {houseToDelete?.numCasa} del cluster {houseToDelete?.cluster}?</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModal(false)}>
                 Cancelar
               </Button>
-              <Button variant="danger" onClick={confirmDelete}>
-                Eliminar
+              <Button variant="danger" onClick={confirmDelete} disabled={loadingDelete} >
+                {loadingDelete ? (<><Spinner animation="border" size="sm" /> Eliminando...</>) : ( 'Eliminar' )}
               </Button>
             </Modal.Footer>
           </Modal>

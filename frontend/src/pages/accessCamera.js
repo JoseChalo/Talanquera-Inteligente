@@ -13,6 +13,9 @@ function Home() {
   const [recognitionHistory, setRecognitionHistory] = useState([]);
   const [selectedDate, setSelectedDate] = useState('*');
 
+  const [nombreEntrada, setNombreEntrada] = useState('');
+  const [dpiEntrada, setdpiEntrada] = useState('');
+
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -42,7 +45,7 @@ function Home() {
   };
 
   const handleDateChange = (event) => {
-    setSelectedDate(new Date(event.target.value).toISOString().split('T')[0]); // Captura la fecha en formato "YYYY-MM-DD"
+    setSelectedDate(new Date(event.target.value).toISOString().split('T')[0]);
   };
   
 
@@ -61,9 +64,11 @@ function Home() {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!response.ok) throw new Error(`Error: Error al buscar el residente: ${response.statusText}`);
+      if (!response.ok) throw new Error(`No se reconoce a la persona o vehiculo.`);
 
       const data = await response.json();
+      setNombreEntrada(data.nombreEntrada);
+      setdpiEntrada(data.dpiEntrada);
       setServerResponse(data);
       fetchRecognitionHistory();
 
@@ -83,92 +88,86 @@ function Home() {
     };
     startCamera();
     
-    // Llamar a la función que obtiene el historial cuando se carga el componente
     fetchRecognitionHistory();
   }, []);
 
   return (
     <>
       <CustomNavbar />
-      <div className="home-container">
-        
-        <Container className="card-container">
-          
-          <Card className="card">
-            <h2>Historial de Reconocimientos</h2>
-            <InputGroup className="mb-3">
-              <Form.Control type="date" aria-label="Buscar por fecha" onChange={handleDateChange} />
-              <Button variant="primary" id="button-addon1" onClick={fetchRecognitionHistory}>
-                Buscar
-              </Button>
-            </InputGroup>
-            <div className="card-content table-container">
-              <Table striped bordered hover variant="dark">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>DPI</th>
-                    <th>fecha</th>
-                    <th>hora</th>
-                  </tr>
-                </thead>
-                  <tbody>
-                    {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => {
-                      const fechaObj = new Date(record.fecha);
-                      const horaObj = new Date(record.hora);
-                      const fechaFormateada = !isNaN(fechaObj) ? fechaObj.toISOString().split('T')[0] : 'Fecha inválida';
-                      const horaFormateada = !isNaN(horaObj) ? horaObj.toISOString().split('T')[1].split('.')[0] : 'Hora inválida';
+        <div className="home-container">
+          <Container className="card-container">
+            <Card className="card">
+              <h2>Historial de Reconocimientos</h2>
+              <InputGroup className="mb-3">
+                <Form.Control type="date" aria-label="Buscar por fecha" onChange={handleDateChange} />
+                <Button className='search' id="button-addon1" onClick={fetchRecognitionHistory}>
+                  Buscar
+                </Button>
+              </InputGroup>
+              <div className="card-content table-container">
+                <Table striped bordered hover variant="dark">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>DPI</th>
+                      <th>fecha</th>
+                      <th>hora</th>
+                    </tr>
+                  </thead>
+                    <tbody>
+                      {recognitionHistory.length > 0 ? recognitionHistory.map((record, index) => {
+                        const fechaObj = new Date(record.fecha);
+                        const horaObj = new Date(record.hora);
+                        const fechaFormateada = !isNaN(fechaObj) ? fechaObj.toISOString().split('T')[0] : 'Fecha inválida';
+                        const horaFormateada = !isNaN(horaObj) ? horaObj.toISOString().split('T')[1].split('.')[0] : 'Hora inválida';
 
-                      return (
-                        <tr key={index}>
-                          <td>{record.nombre}</td>
-                          <td>{record.dpi}</td>
-                          <td>{fechaFormateada}</td>
-                          <td>{horaFormateada}</td>
+                        return (
+                          <tr key={index}>
+                            <td>{record.nombre}</td>
+                            <td>{record.dpi}</td>
+                            <td>{fechaFormateada}</td>
+                            <td>{horaFormateada}</td>
+                          </tr>
+                        );
+                      }) : (
+                        <tr>
+                          <td colSpan="4">No hay registros.</td>
                         </tr>
-                      );
-                    }) : (
-                      <tr>
-                        <td colSpan="4">No hay registros.</td>
-                      </tr>
-                    )}
-                  </tbody>
-              </Table>
-            </div>
-          </Card>
+                      )}
+                    </tbody>
+                </Table>
+              </div>
+            </Card>
 
-          <Card className="card">
-            <h2>Cámara</h2>
-            <div className="camera-column">
-              <video ref={videoRef} autoPlay className="video-feed" />
-              <Button variant="success" onClick={captureImage} className="capture-button">
-                Tomar Foto
-              </Button>
+            <Card className="card">
+              <h2>Cámara</h2>
+              <div className="camera-column">
+                <video ref={videoRef} autoPlay className="video-feed" />
+                <Button variant="success" onClick={captureImage} className="capture-button">
+                  Tomar Foto
+                </Button>
 
-              {image && (
-                <div className="captured-image-container">
-                  <img src={image} alt="Captura" className="captured-image" />
-                  <Button variant="info" onClick={searchResident} className="capture-button">
-                    Enviar Foto
-                  </Button>
-                </div>
-              )}
-            </div>
-          </Card>
-        </Container>
+                {image && (
+                  <div className="captured-image-container">
+                    <img src={image} alt="Captura" className="captured-image" />
+                    <Button variant="info" onClick={searchResident} className="capture-button">
+                      Enviar Foto
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </Container>
 
-        {error && <Alert variant="danger">{error}</Alert>}
-        {serverResponse && (
+          {error && <Alert variant="danger">{error}</Alert>}
+          {serverResponse && (
           <div className="response-container">
             <h2>Resultados del Reconocimiento</h2>
-            {serverResponse.dataResident.length > 0 ? (
-              serverResponse.dataResident.map((match, index) => (
-                <div key={index}>
-                  <p><strong>Residente:</strong> {match.Face.ExternalImageId}</p>
-                  <p><strong>Confianza:</strong> {match.Face.Confidence.toFixed(2)}%</p>
-                  <p><strong>Similitud:</strong> {match.Similarity.toFixed(2)}%</p>
-                </div>
-              ))
+            {serverResponse.dpiEntrada.length > 0 ? (
+              <div>
+                <p><strong>Nombre:</strong> {nombreEntrada}</p>
+                <p><strong>DPI:</strong> {dpiEntrada}%</p>
+              </div>
             ) : (
               <p>No se encontraron coincidencias.</p>
             )}

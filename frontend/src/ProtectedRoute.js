@@ -13,12 +13,10 @@ const ProtectedRoute = ({ element, rolesAllowed, accessDeniedPath }) => {
     return <div>Loading...</div>;
   }
 
-  // Redirigir a login
   if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // Redirigir a la página de acceso denegado
   if (rolesAllowed && !rolesAllowed.includes(user.role)) {
     return <Navigate to={accessDeniedPath || "/accessDenied"} replace />;
   }

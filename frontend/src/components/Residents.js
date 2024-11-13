@@ -4,14 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Residents.css';
 import CustomNavbar from './Navbar';
 
-
 function Residents() {
   const navigate = useNavigate();
   const [residents, setResidents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [residentToDelete, setResidentToDelete] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
-
 
   // Función para obtener residentes
   const fetchResidents = async () => {
@@ -51,15 +49,14 @@ function Residents() {
       setLoadingDelete(true);
       try {
         const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/deleteResident', {
-          method: 'POST', // Cambiado a POST
+          method: 'POST',
           body: JSON.stringify({ DPI: residentToDelete.dpi }),
           headers: { 'Content-Type': 'application/json' },
         });
         
         if (response.ok) {
-          // Actualizar la lista de residentes después de la eliminación
-          await fetchResidents(); // Asegúrate de que se espere a que la función se complete
-          setShowModal(false); // Cerrar el modal después de actualizar la lista
+          await fetchResidents();
+          setShowModal(false);
         } else {
           console.error('Error al eliminar residente:', response.statusText);
         }
@@ -116,7 +113,6 @@ function Residents() {
             </tbody>
           </Table>
 
-          {/* Confirmación */}
           <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
             <Modal.Header closeButton>
               <Modal.Title>Confirmación de Eliminación</Modal.Title>

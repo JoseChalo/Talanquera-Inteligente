@@ -16,7 +16,6 @@ function EditCars() {
   const car = location.state?.car;
   const [loading, setLoading] = useState(false);
 
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -36,7 +35,6 @@ function EditCars() {
     };
   }, []);
 
-  // Obtener los datos del vehículo al cargar la página
   useEffect(() => {
     if(car){
       setDpi(car.idResidente || '');
@@ -46,7 +44,6 @@ function EditCars() {
     }
   }, [car]);
 
-  // Capturar una nueva imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -63,14 +60,12 @@ function EditCars() {
     }, 'image/jpeg');
   };
 
-  // Apagar la cámara
   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
   };
 
-  // Función para enviar la actualización
   const updateCar = async () => {
     if (image) {
       setLoading(true);
@@ -91,6 +86,14 @@ function EditCars() {
 
         const data = await response.json();
         console.log('Respuesta del servidor:', data);
+
+        alert(data.message);
+        if(data.error){
+          return false;
+        } else {
+          return true;
+        }
+
       } catch (error) {
         console.error('Error al actualizar los datos:', error);
       } finally {
@@ -108,9 +111,11 @@ function EditCars() {
       return;
     }
 
-    updateCar().then(() => {
-      stopCamera(); // Apagar la cámara antes de navegar
-      navigate('/Cars');
+    updateCar().then((finalizado) => {
+      if(finalizado){
+        stopCamera();
+        navigate('/Cars');
+      }
     });
   };
 

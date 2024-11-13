@@ -11,44 +11,46 @@ function Visits() {
   const [visitToDelete, setVisitToDelete] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Función para obtener visitas
-  const fetchVisits = async () => {
+  const fetchVisits = async (storedUser) => {
     try {
+      let dpiValue;
+      if (storedUser.role === 'admin') {
+        dpiValue = '*';
+      } else {
+        dpiValue = storedUser.user;
+      }
+      
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getVisits', {
         method: 'POST',
-        body: JSON.stringify({ DPI: '*' }),
+        body: JSON.stringify({ DPI: dpiValue }),
         headers: { 'Content-Type': 'application/json' },
       });
+      
       const data = await response.json();
       setVisits(data.data);
     } catch (error) {
       console.error('Error al obtener visitas:', error);
     }
   };
-
-  // Llamada inicial para cargar visitas
+  
   useEffect(() => {
-    fetchVisits();
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    fetchVisits(storedUser);
   }, []);
 
-  // Manejar el registro de nueva visita
   const handleRegisterVisit = () => {
     navigate('/RegisterVisits');
   };
 
-  // Editar visita
   const handleEditClick = (visit) => {
     navigate('/EditVisit', { state: { visita: visit } });
   };
 
-
-  // Configurar visita para eliminar y abrir modal
   const handleDeleteClick = (visit) => {
     setVisitToDelete(visit);
     setShowModal(true);
   };
-
-  // Confirmar eliminación
+  
   const confirmDelete = async () => {
     if (visitToDelete) {
       setLoadingDelete(true);
@@ -125,7 +127,6 @@ function Visits() {
             </tbody>
           </Table>
 
-          {/* Modal de confirmación */}
           <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
             <Modal.Header closeButton>
               <Modal.Title>Confirmación de Eliminación</Modal.Title>

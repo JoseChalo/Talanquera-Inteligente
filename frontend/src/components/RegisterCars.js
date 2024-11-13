@@ -10,25 +10,22 @@ function RegisterCars() {
   const [color, setColor] = useState('');
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
-  const streamRef = useRef(null); // Para almacenar el stream de la cámara
+  const streamRef = useRef(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-
-  // Iniciar la cámara
   useEffect(() => {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoRef.current.srcObject = stream;
-        streamRef.current = stream; // Guardar el stream
+        streamRef.current = stream;
       } catch (error) {
         console.error("Error al acceder a la cámara:", error);
       }
     };
     startCamera();
 
-    // Limpiar el stream al desmontar
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
@@ -36,7 +33,6 @@ function RegisterCars() {
     };
   }, []);
 
-  // Capturar la imagen
   const captureImage = () => {
     const canvas = document.createElement('canvas');
     canvas.width = videoRef.current.videoWidth;
@@ -53,14 +49,12 @@ function RegisterCars() {
     }, 'image/jpeg');
   };
 
-  // Apagar la cámara
   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
   };
 
-  // Función para enviar los datos
   const newCar = async () => {
     if (image) {
       setLoading(true);
@@ -69,7 +63,7 @@ function RegisterCars() {
           method: 'POST',
           body: JSON.stringify({
             DPI: dpi,
-            matricula: image,  // Enviar la imagen de la matrícula
+            matricula: image,
             modelo: model,
             color: color,
           }),
@@ -80,6 +74,13 @@ function RegisterCars() {
 
         const data = await response.json();
         console.log('Respuesta del servidor:', data);
+
+        alert(data.message);
+        if (!data.error) {
+          return true;
+        } else {
+          return false;
+        }
       } catch (error) {
         console.error('Error al enviar los datos:', error);
       } finally {
@@ -97,9 +98,11 @@ function RegisterCars() {
       return;
     }
 
-    newCar().then(() => {
-      stopCamera(); // Apagar la cámara antes de navegar
-      navigate('/Cars');
+    newCar().then((finalizado) => {
+      if(finalizado){
+        stopCamera();
+        navigate('/Cars');
+      }
     });
   };
 
@@ -172,7 +175,6 @@ function RegisterCars() {
         </Container>
       </div>    
     </>
-
   );
 }
 

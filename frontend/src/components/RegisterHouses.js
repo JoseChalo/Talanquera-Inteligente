@@ -9,13 +9,12 @@ function RegisterHouses() {
   const [cluster, setCluster] = useState('');
   const navigate = useNavigate();
 
-  // Función para enviar los datos
   const newHouse = async () => {
     try {
-      const response = await fetch('https://api-url/saveHouse', {
+      const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/saveHome', {
         method: 'POST',
         body: JSON.stringify({
-          numeroCasa: numeroCasa,
+          numHome: numeroCasa,
           cluster: cluster,
         }),
         headers: {
@@ -25,8 +24,9 @@ function RegisterHouses() {
 
       const data = await response.json();
       console.log('Respuesta del servidor:', data);
-      if (data.success) {
-        navigate('/Houses'); // Redirigir a la página de casas después del registro
+      if (!data.error) {
+        alert(data.message);
+        navigate('/Houses');
       } else {
         alert('Error al registrar la casa');
       }
@@ -41,7 +41,6 @@ function RegisterHouses() {
       alert('Por favor completa todos los campos.');
       return;
     }
-
     newHouse();
   };
 

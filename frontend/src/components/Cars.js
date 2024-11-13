@@ -11,7 +11,6 @@ function Cars() {
   const [carToDelete, setCarToDelete] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Función para obtener carros
   const fetchCars = async () => {
     try {
       const response = await fetch('https://ipx89knqqf.execute-api.us-east-2.amazonaws.com/getCars', {
@@ -34,7 +33,6 @@ function Cars() {
     }
   };
 
-  // Obtener carros al cargar el componente
   useEffect(() => {
     fetchCars();
   }, []);
@@ -66,9 +64,8 @@ function Cars() {
         });
 
         if (response.ok) {
-          // Actualizar la lista de vehículos después de la eliminación
           await fetchCars();
-          setShowModal(false); // Cerrar el modal después de actualizar la lista
+          setShowModal(false);
         } else {
           console.error('Error al eliminar vehículo:', response.statusText);
           alert('Error al eliminar vehículo: ' + response.statusText);
@@ -125,7 +122,6 @@ function Cars() {
             </tbody>
           </Table>
 
-          {/* Modal de confirmación de eliminación */}
           <Modal show={showModal} onHide={() => setShowModal(false)} className="dark-modal">
             <Modal.Header closeButton>
               <Modal.Title>Confirmación de Eliminación</Modal.Title>
