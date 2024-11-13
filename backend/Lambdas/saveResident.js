@@ -10,7 +10,6 @@ let errorMessage = '';
 let imageBuffer = null;
 let detectedPlateText = null;
 
-// Configuración de conexión a MSSQL
 const sqlConfig = {
   user: 'admin',
   password: 'Skelett337626',
@@ -35,14 +34,12 @@ const analyzeImageFromBytes = async (image) => {
     };
     const labelsResponse = await rekognition.detectLabels(detectLabelsParams).promise();
 
-    // Verificar si "Person" o "Human" está en las etiquetas detectadas
     isPerson = labelsResponse.Labels.some(label =>
       ['Person', 'Human'].includes(label.Name)
     );
 
     console.log('Es una persona? ', isPerson);
 
-    // Paso 2: Detectar texto
     const detectTextParams = {
       Image: { Bytes: buffer },
     };
@@ -142,8 +139,6 @@ module.exports.handler = async (event) => {
       .query(`INSERT INTO usuarios (userDPI, contra, rol) VALUES (@dpi, @contra, 'residente')`);
     }
 
-
-    // Indexar la cara en Rekognition
     const rekognitionParams = {
       CollectionId: 'Faces',
       Image: { S3Object: { Bucket: S3_BUCKET_NAME, Name: `Fotos_Residentes/${DPI}.jpg` } },

@@ -18,7 +18,7 @@ const sqlConfig = {
 const S3_BUCKET_NAME = 'imagenes-talanquera-inteligente';
 let isPersonChek = false;
 let isCarChek = false;
-let errorMessage = ''; // Mover esta variable aquí asegura que el mensaje de error se mantenga en la respuesta
+let errorMessage = '';
 let imageBuffer = null;
 let detectedPlateText = null;
 
@@ -40,7 +40,7 @@ module.exports.handler = async (event) => {
     }
 
     if (image !== 'No Foto') {
-      await analyzeImageFromBytes(image); // Esperar la función
+      await analyzeImageFromBytes(image);
 
       if (!isPersonChek) {
         errorMessage = 'No se reconoce a una persona en la imagen, intente de nuevo.';
@@ -113,7 +113,7 @@ module.exports.handler = async (event) => {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: errorMessage || 'Error al procesar la solicitud', // Devolver errorMessage si está definido
+        message: errorMessage || 'Error al procesar la solicitud',
         error: error.message,
       }),
     };

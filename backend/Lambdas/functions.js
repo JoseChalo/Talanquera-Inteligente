@@ -9,11 +9,6 @@ module.exports.handler = async (event) => {
     let faceList = [];
     let response = null;
 
-    /* 
-        1: Ver listado de personas en rekognition registradas 
-        2: Eliminar la colección de rostros
-        3: Crear la colección
-    */
     switch (numFunction) {
       case 1:
         try {

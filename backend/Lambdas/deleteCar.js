@@ -24,7 +24,6 @@ module.exports.handler = async (event) => {
     const { DPI, matricula } = JSON.parse(event.body);
     console.log('Parámetros recibidos:', { DPI, matricula });
 
-    // Verifica si el registro existe antes de eliminarlo
     const existsResult = await request
       .input('idResidente', sql.VarChar, DPI)
       .input('matricula', sql.VarChar, matricula)
@@ -39,13 +38,10 @@ module.exports.handler = async (event) => {
       };
     }
 
-    // Primero, eliminar el registro relacionado en residentes_automovil
     await request.query(`DELETE FROM residentes_automovil WHERE matricula = @matricula AND idResidente = @idResidente`);
 
-    // Luego, eliminar el registro en automovil
     await request.query(`DELETE FROM automovil WHERE matricula = @matricula`);
 
-    // Finalmente, eliminar la imagen de S3
     try {
       await s3.deleteObject({
         Bucket: BUCKET_NAME,

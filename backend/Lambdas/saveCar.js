@@ -1,11 +1,9 @@
 const AWS = require('aws-sdk');
 const sql = require('mssql');
 
-// Inicializar los servicios de AWS
 const s3 = new AWS.S3();
 const rekognition = new AWS.Rekognition();
 
-// Configuración de conexión a MSSQL
 const sqlConfig = {
   user: 'admin',
   password: 'Skelett337626',
@@ -24,15 +22,12 @@ module.exports.handler = async (event) => {
 
     console.log('Evento recibido:', event);
 
-    // Validar el cuerpo de la solicitud
     const { DPI, matricula, modelo, color } = JSON.parse(event.body);
     console.log('Parámetros validados:', { DPI, matricula, modelo, color });
 
-    // Convertir la imagen de base64 a buffer
     const base64Data = matricula.replace(/^data:image\/jpeg;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
 
-    // Detectar texto en la imagen utilizando Rekognition
     const paramsMatricula = {
       Image: {
         Bytes: buffer,
@@ -42,7 +37,6 @@ module.exports.handler = async (event) => {
     const rekognitionData = await rekognition.detectText(paramsMatricula).promise();
     console.log("Textos detectados:", rekognitionData.TextDetections);
 
-    // Filtrar los textos que cumplan con el formato de placas de Guatemala
     const placaPattern = /^[PACUMTCR]{1}\s?\d{3}[A-Z]{3}$/;
     const placasDetectadas = rekognitionData.TextDetections
       .map(detection => detection.DetectedText)
@@ -55,7 +49,6 @@ module.exports.handler = async (event) => {
     const detectedText = placasDetectadas[0];
     console.log("Placa detectada:", detectedText);
 
-    // Buscar residente en la base de datos
     request.input('DPI', sql.VarChar, DPI);
     console.log('Consultando residente en la base de datos...');
     const searchResidente = 'SELECT * FROM residentes WHERE dpi = @DPI AND estado = 1';
@@ -65,7 +58,6 @@ module.exports.handler = async (event) => {
       throw new Error(`No existe un residente con el DPI: ${DPI} en la base de datos.`);
     }
 
-    // Subir la imagen a S3
     const s3Params = {
       Bucket: 'imagenes-talanquera-inteligente',
       Key: `Fotos_Matriculas/${DPI} - ${detectedText}.jpg`,
@@ -77,7 +69,6 @@ module.exports.handler = async (event) => {
     const uploadResult = await s3.upload(s3Params).promise();
     console.log('Subida a S3 exitosa:', uploadResult.Location);
 
-    // Verificar si el automóvil ya existe
     request.input('detectedText', sql.VarChar, detectedText);
     const searchAutomovil = 'SELECT * FROM automovil WHERE matricula = @detectedText';
     const resultSearchAutomovil = await request.query(searchAutomovil);
@@ -94,7 +85,6 @@ module.exports.handler = async (event) => {
         }),
       };
     } else {
-      // Insertar nuevo automóvil en la base de datos
       console.log('Insertando nuevo automóvil en la base de datos...');
       request.input('modelo', sql.VarChar, modelo);
       request.input('color', sql.VarChar, color);
@@ -102,7 +92,6 @@ module.exports.handler = async (event) => {
       const insertCar = 'INSERT INTO automovil (matricula, modelo, color, credencialesVehiculo, estado) VALUES (@detectedText, @modelo, @color, @imageLocation, 1)';
       await request.query(insertCar);
 
-      // Enlazar automóvil con residente
       console.log('Enlazando automóvil con residente...');
       request.input('idResidente', sql.VarChar, DPI);
       const carResident = 'INSERT INTO residentes_automovil (idResidente, matricula) VALUES (@idResidente, @detectedText)';

@@ -1,11 +1,9 @@
 const AWS = require('aws-sdk');
 const sql = require('mssql');
 
-// Inicializar los servicios de AWS
 const s3 = new AWS.S3();
 const rekognition = new AWS.Rekognition();
 
-// Configuración de conexión a MSSQL
 const sqlConfig = {
   user: 'admin',
   password: 'Skelett337626',

@@ -26,12 +26,10 @@ module.exports.handler = async (event) => {
     const { DPI } = JSON.parse(event.body);
     console.log('Parámetros recibidos:', { DPI });
 
-    // Eliminar la imagen de Rekognition
     await Promise.all([
       deleteFaceInCollection(DPI),
     ]);
 
-    // Obtener matrículas y visitantes asociados a eliminar
     const matriculasResult = await request.input('DPI', sql.VarChar, DPI).query('SELECT matricula FROM residentes_automovil WHERE idResidente = @DPI;');
     const visitasResult = await request.query('SELECT dpiVisita FROM visitas WHERE dpiResidente = @DPI');
     
@@ -50,7 +48,6 @@ module.exports.handler = async (event) => {
       });
     }
 
-    // Deshabilitar al residente
     await request.query(`
       UPDATE residentes SET estado = 0 WHERE dpi = @DPI
     `);
@@ -74,12 +71,11 @@ module.exports.handler = async (event) => {
     };
   } finally {
     if (pool) {
-      await pool.close(); // Cerrar la conexión
+      await pool.close();
     }
   }
 };
 
-// Función para eliminar la cara en Rekognition
 const deleteFaceInCollection = async (DPI) => {
   try {
     const faceSearchResult = await rekognition.searchFacesByImage({

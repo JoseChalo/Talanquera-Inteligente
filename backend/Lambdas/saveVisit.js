@@ -12,7 +12,6 @@ let errorMessage = '';
 let imageBuffer = null;
 let detectedPlateText = null;
 
-// Configuración de conexión a MSSQL
 const sqlConfig = {
   user: 'admin',
   password: 'Skelett337626',
@@ -44,18 +43,15 @@ module.exports.handler = async (event) => {
       throw new Error('Faltan campos obligatorios');
     }
 
-    // Verificación de la vivienda
     const searchHomeQuery = 'SELECT * FROM vivienda WHERE numCasa = @numHome AND cluster = @cluster';
     request.input('numHome', sql.Int, numViviendaDestino);
     request.input('cluster', sql.VarChar, clusterDestino);
     const homeResult = await request.query(searchHomeQuery);
 
-    // Verificación del residente
     const searchResidentQuery = 'SELECT * FROM residentes WHERE dpi = @searchDPIResidente';
     request.input('searchDPIResidente', sql.VarChar, dpiResidente);
     const residentResult = await request.query(searchResidentQuery);
 
-    // Verificar o actualizar visita
     const searchVisitaQuery = 'SELECT * FROM visitas WHERE dpiVisita = @dpiVisita';
     request.input('dpiVisita', sql.VarChar, dpiVisita);
     const visitaResult = await request.query(searchVisitaQuery);
@@ -182,12 +178,10 @@ const analyzeImageFromBytes = async (image) => {
     };
     const labelsResponse = await rekognition.detectLabels(detectLabelsParams).promise();
 
-    // Verificar si "Person" o "Human" está en las etiquetas detectadas
     isPerson = labelsResponse.Labels.some(label =>
       ['Person', 'Human'].includes(label.Name)
     );
 
-    // Paso 2: Detectar texto
     const detectTextParams = {
       Image: { Bytes: buffer },
     };

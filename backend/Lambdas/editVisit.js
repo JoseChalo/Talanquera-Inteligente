@@ -68,7 +68,6 @@ module.exports.handler = async (event) => {
           ContentType: 'image/jpeg',
         };
     
-        // Subir imagen a S3
         const uploadResult = await s3.upload(s3Params).promise();
         console.log('Subida a S3 exitosa:', uploadResult.Location);
 
@@ -126,7 +125,6 @@ module.exports.handler = async (event) => {
           ContentType: 'image/jpeg',
         };
         
-        // Subir imagen de la matrícula a S3
         const uploadResult = await s3.upload(s3Params).promise();
         console.log('Subida a S3 exitosa:', uploadResult.Location);
 
@@ -196,12 +194,10 @@ const analyzeImageFromBytes = async (image) => {
     };
     const labelsResponse = await rekognition.detectLabels(detectLabelsParams).promise();
 
-    // Verificar si "Person" o "Human" está en las etiquetas detectadas
     isPerson = labelsResponse.Labels.some(label =>
       ['Person', 'Human'].includes(label.Name)
     );
 
-    // Paso 2: Detectar texto
     const detectTextParams = {
       Image: { Bytes: buffer },
     };

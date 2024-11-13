@@ -22,7 +22,6 @@ module.exports.handler = async (event) => {
     const pool = await sql.connect(sqlConfig);
     const request = pool.request();
 
-    // Espera correctamente la respuesta de la consulta
     const userData = await request
       .input('DPI', sql.VarChar, DPI)
       .query('SELECT rol, userDPI, contra FROM usuarios WHERE userDPI = @DPI');

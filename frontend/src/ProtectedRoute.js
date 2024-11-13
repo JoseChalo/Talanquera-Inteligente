@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ element, rolesAllowed, accessDeniedPath }) => {
   const [loading, setLoading] = useState(true);
-  const user = JSON.parse(localStorage.getItem('user')); // Obtener usuario
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     setLoading(false);
